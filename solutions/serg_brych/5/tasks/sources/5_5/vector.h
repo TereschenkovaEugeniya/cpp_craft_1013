@@ -3,7 +3,7 @@
 
 #include <cstdlib>
 #include <memory>
-
+#include <stdexcept>
 
 namespace task5_5
 {
@@ -105,7 +105,7 @@ namespace task5_5
 	}
 
 	template< typename T >
-	T& vector< T >::operator[]( const size_t  index)
+	T& vector< T >::operator[]( const size_t  index )
 	{
 		if(index >= current_size_)
 		{
@@ -115,7 +115,7 @@ namespace task5_5
 	}
 
 	template< typename T >
-	const T& vector< T >::operator[]( const size_t  ) const
+	const T& vector< T >::operator[]( const size_t index ) const
 	{
 		if(index >= current_size_)
 		{
