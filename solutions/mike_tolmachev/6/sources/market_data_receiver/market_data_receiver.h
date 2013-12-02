@@ -12,16 +12,12 @@ namespace multicast_communication
 {
 	class market_data_receiver : private boost::noncopyable
 	{
-		static const size_t default_buffer_size;
-
 		boost::asio::io_service& io_service_;
 
 		boost::asio::ip::udp::endpoint listen_endpoint_;
 		boost::asio::ip::udp::socket socket_;
 
 		std::string multicast_address_;
-
-		typedef boost::shared_ptr< std::string > buffer_type;
 
 		mutable boost::mutex protect_messages_;
 		std::vector< std::string > messages_;
@@ -32,9 +28,8 @@ namespace multicast_communication
 		const std::vector<std::string> messages() const;
 	private:
 		void socket_reload_();
-		void register_listen_(buffer_type pre_buffer = buffer_type(), const size_t previous_size = 0);
-		void listen_handler_(buffer_type bt, const boost::system::error_code& error, const size_t bytes_received);
-		static void enlarge_buffer_(buffer_type& bt);
+		void register_listen_();
+		void listen_handler_(boost::shared_ptr<std::string> buf, const boost::system::error_code& error, const size_t bytes_received);
 	};
 }
 
