@@ -6,21 +6,27 @@
 
 #include "minute_calculator_accumulator.h"
 #include "market_data_processor.h"
+#include "market_data_receiver.h"
+
+static const std::string config_file_path = BINARY_DIR "/config.ini";
 
 namespace minute_market_data
 {
 
 	class minute_market_data_processor : public multicast_communication::market_data_processor
 	{
+		typedef boost::shared_ptr<multicast_communication::market_data_receiver> market_data_receiver_ptr;
 		boost::mutex mutex_;
+		market_data_receiver_ptr receive_;
+		
 	private:
 		virtual void new_trade( const multicast_communication::trade_message_ptr& );
 		virtual void new_quote( const multicast_communication::quote_message_ptr& );
 	public:
-
+		void run();
+		void stop();
 		explicit minute_market_data_processor();
 		~minute_market_data_processor();
-
 
 	};
 }

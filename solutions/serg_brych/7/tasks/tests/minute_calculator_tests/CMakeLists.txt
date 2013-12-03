@@ -8,6 +8,6 @@ find_package( Boost ${SEARCH_PARAMETERS} COMPONENTS
 	regex
 )
 
-compile_project( ${tests_name} "*.cpp" "*.h" BINARY tests ${module_name} Boost )
+compile_project( ${tests_name} "*.cpp" "*.h" BINARY tests ${module_name} Boost minute_calculator )
 register_test( ${tests_name} 10 8 )
 
