@@ -14,6 +14,7 @@ void multicast_communication::tests_::quote_message_tests()
 			BOOST_CHECK_EQUAL( qm.bid_volume(), 0.0 );
 			BOOST_CHECK_EQUAL( qm.offer_price(), 0.0 );
 			BOOST_CHECK_EQUAL( qm.offer_volume(), 0.0 );
+			BOOST_CHECK_EQUAL( qm.time(), 0 );
 		)
 	}
 
@@ -30,6 +31,7 @@ void multicast_communication::tests_::quote_message_tests()
 		BOOST_CHECK_EQUAL( qm.bid_volume(), 6.0 );
 		BOOST_CHECK_EQUAL( qm.offer_price(), 41.48 );
 		BOOST_CHECK_EQUAL( qm.offer_volume(), 4.0 );
+		BOOST_CHECK_EQUAL( qm.time(), 37607 );
 	}
 
 	// test long quote
@@ -45,6 +47,7 @@ void multicast_communication::tests_::quote_message_tests()
 		BOOST_CHECK_EQUAL( qm.bid_volume(), 147.0 );
 		BOOST_CHECK_EQUAL( qm.offer_price(), 4.24 );
 		BOOST_CHECK_EQUAL( qm.offer_volume(), 380.0 );
+		BOOST_CHECK_EQUAL( qm.time(), 37607 );
 		
 	}
 
@@ -61,6 +64,7 @@ void multicast_communication::tests_::quote_message_tests()
 		BOOST_CHECK_EQUAL( qm.bid_volume(), 1.0 );
 		BOOST_CHECK_EQUAL( qm.offer_price(), 41.48 );
 		BOOST_CHECK_EQUAL( qm.offer_volume(), 4.0 );
+		BOOST_CHECK_EQUAL( qm.time(), 37607 );
 	}
 
 
@@ -80,6 +84,7 @@ void multicast_communication::tests_::quote_message_tests()
 			BOOST_CHECK_EQUAL( quote_message_ptr->bid_volume(), 167.0 );
 			BOOST_CHECK_EQUAL( quote_message_ptr->offer_price(), 2.97 );
 			BOOST_CHECK_EQUAL( quote_message_ptr->offer_volume(), 43.0 );
+			BOOST_CHECK_EQUAL( quote_message_ptr->time(), 37607 );
 
 			++it;
 			quote_message_ptr = *it;
@@ -89,6 +94,7 @@ void multicast_communication::tests_::quote_message_tests()
 			BOOST_CHECK_EQUAL( quote_message_ptr->bid_volume(), 151.0 );
 			BOOST_CHECK_EQUAL( quote_message_ptr->offer_price(), 4.24 );
 			BOOST_CHECK_EQUAL( quote_message_ptr->offer_volume(), 353 );
+			BOOST_CHECK_EQUAL( quote_message_ptr->time(), 37607 );
 		}
 
 	}

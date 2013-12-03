@@ -2,7 +2,7 @@
 
 
 multicast_communication::trade_message::trade_message():
-	security_symbol_(""), price_(0.0), volume_(0.0), type_(trade_type::unknown_trade)
+	security_symbol_(""), price_(0.0), volume_(0.0), type_(trade_type::unknown_trade), time_(0)
 {
 	
 }
@@ -26,6 +26,12 @@ multicast_communication::trade_message::trade_type multicast_communication::trad
 {
 	return type_;
 }
+
+uint32_t multicast_communication::trade_message::time() const
+{
+	return time_;
+}
+
 
 bool multicast_communication::trade_message::parse_trade(std::istream &data)
 {
@@ -53,7 +59,11 @@ bool multicast_communication::trade_message::parse_trade(std::istream &data)
 
 void multicast_communication::trade_message::parse_short_trade(std::istream &data)
 {
-	data.seekg(st_security_symbol_pos, std::istream::cur);
+	data.seekg(st_time_stamp_pos, std::istream::cur);
+	std::string temp_time = get_string<st_time_stamp_len>(data);
+
+	time_ = get_time(temp_time[0]) * second_in_hour + get_time(temp_time[1]) * second_in_min + get_time(temp_time[2]);
+	
 	security_symbol_ = get_string<st_security_symbol_len>(data);
 		
 	data.seekg(st_trade_volume_pos, std::istream::cur);
@@ -69,7 +79,11 @@ void multicast_communication::trade_message::parse_short_trade(std::istream &dat
 
 void multicast_communication::trade_message::parse_long_trade(std::istream &data)
 {
-	data.seekg(lt_security_symbol_pos, std::istream::cur);
+	data.seekg(lt_time_stamp_pos, std::istream::cur);
+	std::string temp_time = get_string<lt_time_stamp_len>(data);
+
+	time_ = get_time(temp_time[0]) * second_in_hour + get_time(temp_time[1]) * second_in_min + get_time(temp_time[2]);
+		
 	security_symbol_ = get_string<lt_security_symbol_len>(data);
 
 	data.seekg(lt_price_denominator_indicator_pos, std::istream::cur);

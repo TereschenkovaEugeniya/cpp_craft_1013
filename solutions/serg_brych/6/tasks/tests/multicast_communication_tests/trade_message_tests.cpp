@@ -11,6 +11,7 @@ void multicast_communication::tests_::trade_message_tests()
 		BOOST_CHECK_EQUAL( tm.security_symbol(), "" );
 		BOOST_CHECK_EQUAL( tm.price(), 0.0 );
 		BOOST_CHECK_EQUAL( tm.volume(), 0.0 );
+		BOOST_CHECK_EQUAL( tm.time(), 0);
 	)
 
 	// test short trade
@@ -24,6 +25,7 @@ void multicast_communication::tests_::trade_message_tests()
 		BOOST_CHECK_EQUAL( tm.security_symbol(), "BGS" );
 		BOOST_CHECK_EQUAL( tm.price(),  33.04);
 		BOOST_CHECK_EQUAL( tm.volume(), 100.0);
+		BOOST_CHECK_EQUAL( tm.time(), 36224);
 	}
 
 
@@ -38,6 +40,7 @@ void multicast_communication::tests_::trade_message_tests()
 		BOOST_CHECK_EQUAL( tm.security_symbol(), "ACN        " );
 		BOOST_CHECK_EQUAL( tm.price(), 77.9 );
 		BOOST_CHECK_EQUAL( tm.volume(), 100.0 );
+		BOOST_CHECK_EQUAL( tm.time(), 36225);
 	}
 
 	// test long trade block
@@ -55,6 +58,7 @@ void multicast_communication::tests_::trade_message_tests()
 			BOOST_CHECK_EQUAL( trade_message_ptr->security_symbol(), "XRX        " );
 			BOOST_CHECK_EQUAL( trade_message_ptr->price(), 11.02 );
 			BOOST_CHECK_EQUAL( trade_message_ptr->volume(), 3400.0 );
+			BOOST_CHECK_EQUAL( trade_message_ptr->time(), 36224);
 
 			++it;
 			trade_message_ptr = *it;
@@ -62,6 +66,7 @@ void multicast_communication::tests_::trade_message_tests()
 			BOOST_CHECK_EQUAL( trade_message_ptr->security_symbol(), "VZ         " );
 			BOOST_CHECK_EQUAL( trade_message_ptr->price(), 50.30 );
 			BOOST_CHECK_EQUAL( trade_message_ptr->volume(), 100.0 );
+			BOOST_CHECK_EQUAL( trade_message_ptr->time(), 36224);
 		}
 	}
 

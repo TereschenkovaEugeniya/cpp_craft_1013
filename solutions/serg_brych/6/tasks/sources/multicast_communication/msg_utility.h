@@ -3,6 +3,7 @@
 #include <map>
 #include <boost/lexical_cast.hpp>
 #include <boost/assign.hpp>
+#include <iostream>
 
 static const std::map< const char, double > denominator_map = boost::assign::map_list_of
 	('0' , 1.0)
@@ -13,22 +14,9 @@ static const std::map< const char, double > denominator_map = boost::assign::map
 	('I' , 1.0)
     ;
 
+static const uint32_t second_in_min = 60;
+static const uint32_t second_in_hour = 3600;
 
-template<size_t size>
-double get_number(std::istream& data)
-{
-    char buffer[ size ];
-    data.read( buffer, size );
-    return boost::lexical_cast< double >( buffer, size );
-}
-
-template<size_t size>
-std::string get_string(std::istream& data)
-{
-    char buffer[ size ];
-    data.read( buffer, size );
-    return std::string( buffer , size );
-}
 
 enum Signatures
 {
@@ -36,6 +24,32 @@ enum Signatures
 	EndMessage = 0x03,
 	SeparatorMessage = 0x1F,
 };
+
+template<size_t size> double get_number(std::istream& data)
+{
+    char buffer[ size ];
+    data.read( buffer, size );
+    return boost::lexical_cast< double >( buffer, size );
+}
+
+template<size_t size> std::string get_string(std::istream& data)
+{
+    char buffer[ size ];
+    data.read( buffer, size );
+    return std::string( buffer , size );
+}
+
+static uint32_t get_time(const unsigned char value)
+{
+	if((value >= '0') && (value <= 'k'))
+	{
+		return (value - 48);
+	}
+	else
+	{
+		return 0;
+	}
+}
 
 
 #endif //_MSG_UTILITY_H_
