@@ -4,7 +4,7 @@ set( CMAKE_CONFIGURATION_TYPES ${CMAKE_BUILD_TYPE} CACHE STRING "Configurations"
 project( ${SOLUTION_NAME} )
 include( environment.cmake required )
 
-modules( multicast_communication minute_market_data minute_calculator )
+modules( minute_market_data minute_calculator )
 binaries( data_receiver )
 
 compile()

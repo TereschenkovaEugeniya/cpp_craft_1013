@@ -8,6 +8,10 @@ find_package( Boost ${SEARCH_PARAMETERS} COMPONENTS
 	regex
 )
 
+find_package( multicast_communication ${SEARCH_PARAMETERS} COMPONENTS
+	multicast_communication
+)
+
 compile_project( ${tests_name} "*.cpp" "*.h" BINARY tests ${module_name} Boost multicast_communication minute_calculator)
 register_test( ${tests_name} 60 40 )
 

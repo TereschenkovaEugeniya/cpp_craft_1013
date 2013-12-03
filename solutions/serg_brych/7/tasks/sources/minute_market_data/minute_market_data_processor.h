@@ -5,7 +5,6 @@
 #include <boost/thread.hpp>
 
 #include "minute_calculator_accumulator.h"
-
 #include "market_data_processor.h"
 
 namespace minute_market_data

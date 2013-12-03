@@ -57,12 +57,12 @@ if(we_should_find_${component})
 			NAMES "CMakeLists.txt"
 			HINTS "${multicast_communication_root}/sources/${component}/")
 	set(multicast_communication_${component}_INCLUDE_DIRS ${multicast_communication_${component}_INCLUDE_DIR})
-
+	
 	find_library( multicast_communication_${component}_LIBRARY
 		NAMES "${component}" 
 		HINTS ${binary_search_folder} )
 	set(multicast_communication_${component}_LIBRARIES ${multicast_communication_${component}_LIBRARY})
-
+	
 	if(NOT multicast_communication_FIND_QUIETLY)
 		message(STATUS "multicast_communication ${component} component: ")
 		create_string_from_list(headers ${multicast_communication_${component}_INCLUDE_DIRS})
@@ -72,7 +72,7 @@ if(we_should_find_${component})
 	endif()	
 
 	if(NOT multicast_communication_${component}_INCLUDE_DIR OR NOT multicast_communication_${component}_LIBRARY)
-		message(FATAL_ERROR " We can't find multicast_communication ${component} component")
+		message(FATAL_ERROR " We can't find ${component} component")
 	else()
 		set(multicast_communication_INCLUDE_DIRS ${multicast_communication_INCLUDE_DIRS} ${multicast_communication_${component}_INCLUDE_DIRS})
 		set(multicast_communication_LIBRARIES ${multicast_communication_LIBRARIES} ${multicast_communication_${component}_LIBRARIES})
