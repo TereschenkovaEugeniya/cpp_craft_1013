@@ -16,8 +16,10 @@ namespace minute_market_data
 	class minute_market_data_processor : public multicast_communication::market_data_processor
 	{
 		typedef boost::shared_ptr<multicast_communication::market_data_receiver> market_data_receiver_ptr;
+		typedef boost::shared_ptr<minute_calculator::minute_calculator_accumulator> minute_calculator_accumulator_ptr;
 		boost::mutex mutex_;
 		market_data_receiver_ptr receive_;
+		minute_calculator_accumulator_ptr calculator_;
 		
 	private:
 		virtual void new_trade( const multicast_communication::trade_message_ptr& );

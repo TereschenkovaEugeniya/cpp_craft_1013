@@ -12,6 +12,12 @@ find_package( multicast_communication ${SEARCH_PARAMETERS} COMPONENTS
 	multicast_communication
 )
 
-compile_project( ${tests_name} "*.cpp" "*.h" BINARY tests ${module_name} Boost multicast_communication minute_calculator minute_market_data )
+
+find_package( system_utilities ${SEARCH_PARAMETERS} COMPONENTS
+	ts_queue
+)
+
+
+compile_project( ${tests_name} "*.cpp" "*.h" BINARY tests ${module_name} Boost multicast_communication minute_calculator minute_market_data system_utilities)
 register_test( ${tests_name} 60 40 )
 
