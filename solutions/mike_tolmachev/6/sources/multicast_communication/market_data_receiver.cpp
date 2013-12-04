@@ -42,8 +42,8 @@ void market_data_receiver::register_listen_()
 	char* const buf_start = &(*buf->begin());
 
 	using namespace boost::asio::placeholders;
-	socket_.async_receive(boost::asio::buffer(buf_start, 1000), 
-		boost::bind( &market_data_receiver::listen_handler_, this, buf, error, bytes_transferred ) );
+	socket_.async_receive(boost::asio::buffer(buf_start, 1000),
+        boost::bind(&market_data_receiver::listen_handler_, this, buf, _1, _2));
 }
 
 void market_data_receiver::listen_handler_(boost::shared_ptr<std::string> buf, const boost::system::error_code& error, const size_t bytes_received)
