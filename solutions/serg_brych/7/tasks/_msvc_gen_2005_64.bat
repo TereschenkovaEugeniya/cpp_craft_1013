@@ -3,6 +3,7 @@
 set SOLUTION_NAME=trade_processor_project
 set BOOST_ROOT=d:/usr/boost_1_54_0
 set MULTICAST_COMMUNICATION_ROOT=%CD%/../../6/tasks/
+set SYSTEM_UTILITIES_ROOT=c:/libs/system_utilities
 
 set BUILD_TYPE=Debug
 if [%1]==[Release] (
