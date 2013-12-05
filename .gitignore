@@ -18,3 +18,7 @@
 # CMake Framework Default Folder Names
 _build_*_*
 _start_msvc.bat
+
+#LibreOffice tmp file
+.~*
+

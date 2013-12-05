@@ -49,7 +49,7 @@ void FindMinMaxElementsInMatrix::Perform() {
   
   thg_.join_all();
   {
-     boost::mutex::scoped_lock(rows_results_guard_);
+     boost::mutex::scoped_lock lock(rows_results_guard_);
      for (size_t i = 0; i < rows_results_.size(); ++i) {
        if (rows_results_[i].first < minimal_element_)
          minimal_element_ = rows_results_[i].first;
@@ -75,7 +75,7 @@ int FindMinMaxElementsInMatrix::GetMaxElement() const {
 }
 
 void FindMinMaxElementsInMatrix::PutRowResults(const pair<int, int>& rr) {
-  boost::mutex::scoped_lock(rows_results_guard_);
+  boost::mutex::scoped_lock lock(rows_results_guard_);
   rows_results_.push_back(rr);
 }
 

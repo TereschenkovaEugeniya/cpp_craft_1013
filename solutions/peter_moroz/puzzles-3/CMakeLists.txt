@@ -5,6 +5,6 @@ project( ${SOLUTION_NAME} )
 include( environment.cmake required )
 
 modules( common )
-binaries( task-24 task-25 task-26 )
+binaries( task-34 task-35 task-36 )
 
 compile()

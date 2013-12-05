@@ -2,7 +2,6 @@
 #include <sstream>
 #include "Restrictions.h"
 #include "MessagesProcessor.h"
-#include "ThreadsafeConsoleOutput.h"
 #include "ThreadsafeStatistics.h"
 
 using namespace std;
@@ -13,12 +12,8 @@ MessagesProcessor::~MessagesProcessor() {}
 void MessagesProcessor::Workflow() {
   stringstream msg;
   ifstream ifs(in_fname_.c_str(), ios_base::binary);
-  if (!ifs.is_open()) {
-    msg << "Can't open file " << in_fname_ 
-      << " thread terminated." << endl;
-    threadsafe_console_output::PrintText(msg.str());
+  if (!ifs.is_open())
     return;
-  }
 
   Message message;
   message.ReadFrom(ifs);

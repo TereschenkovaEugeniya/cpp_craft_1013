@@ -37,8 +37,5 @@ void Message::WriteTo(ostream& os) const {
   os.write(reinterpret_cast<const char*>(&days_since_christmas_), sizeof(days_since_christmas_));
   os.write(reinterpret_cast<const char*>(&vwap_), sizeof(vwap_));
   os.write(reinterpret_cast<const char*>(&volume_), sizeof(volume_));
-
-  os.write(reinterpret_cast<const char*>(&f1_), sizeof(f1_));
-  os.write(reinterpret_cast<const char*>(&f4_), sizeof(f4_));
-  os.write(reinterpret_cast<const char*>(&f3_), sizeof(f3_));
+  os.write(reinterpret_cast<const char*>(&f2_), sizeof(f2_));
 }

@@ -20,7 +20,7 @@ private:
   boost::uint32_t start_time_;
   boost::uint32_t finish_time_;
   std::map<MessageType, unsigned> counters_;
-  boost::mutex time_range_guard_;
+  boost::mutex timerange_guard_;
   boost::mutex counters_guard_;
 };
 

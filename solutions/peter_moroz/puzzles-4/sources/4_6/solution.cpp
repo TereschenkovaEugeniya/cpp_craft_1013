@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <iostream>
 #include <sstream>
+#include <stdexcept>
 #include <cmath>
 #include "solution.h"
 #include <boost/lexical_cast.hpp>
@@ -35,12 +36,7 @@ double MultilineCalculator::CalculateExpression(const std::string& expr) {
   // skip assignment operator
   ++p;
   // calculate value of expression
-  double value = 0.0;
-  try {
-    value = GetValueOfExpression(s, p);
-  } catch (std::logic_error&) {
-    throw;
-  }
+  double value = GetValueOfExpression(s, p);
   names_table_[name] = value;
   return value;
 }
@@ -52,17 +48,11 @@ double MultilineCalculator::GetValueOf(const std::string& variable_name) const {
     msg << "There are no variable with name: " << variable_name;
     throw std::logic_error(msg.str());
   }
-
   return it->second;
 }
 
 double MultilineCalculator::GetValueOfExpression(const std::string& s, size_t& p) {
-  double result = 0.0;
-  try {
-    result = Expr(s, p);
-  } catch (std::logic_error&) {
-    throw;
-  }
+  double result = Expr(s, p);
 
   if (p < s.length()) {
     std::stringstream msg;
@@ -74,23 +64,15 @@ double MultilineCalculator::GetValueOfExpression(const std::string& s, size_t& p
 }
 double MultilineCalculator::Expr(const std::string& s, size_t& p) {
   char op = ' ';
-  double result = 0.0;
-  try {
-    result = Term(s, p);
-  } catch (std::logic_error&) {
-    throw;
-  }
+  double result = Term(s, p);
+
   while (p < s.length() && (s[p] == '+' || s[p] == '-')) {
     op = s[p];
     ++p;
-	try {
-      if (op == '+')
-        result += Term(s, p);
-      else if (op == '-')
-        result -= Term(s, p);
-	} catch (std::logic_error&) {
-	  throw;
-	}
+    if (op == '+')
+      result += Term(s, p);
+    else if (op == '-')
+      result -= Term(s, p);
   } // while (p < s.length() && (s[p] == '+' || s[p] == '-'))
   return result;
 }
@@ -98,37 +80,28 @@ double MultilineCalculator::Factor(const std::string& s, size_t& p) {
   if (p > s.length()) 
     throw std::logic_error("Factor - Unexpected end of string");
 
-  try {
-    if (isdigit(s[p]))
-      return Number(s, p);
-    if (isalpha(s[p]))
-      return Identifier(s, p);
-  } catch (std::logic_error&) {
-	throw;
-  }
+  if (isdigit(s[p]))
+    return Number(s, p);
+  if (isalpha(s[p]))
+    return Identifier(s, p);
 
   double result = 0;
   std::stringstream msg;
 
   if (s[p] == '(') {
     ++p;
-	try {
-      result = Expr(s, p);
-	} catch (std::logic_error&) {
-	  throw;
-	}
+    result = Expr(s, p);
 
     if (p >= s.length() || s[p] != ')') {
       msg << "The \')\' is expected in position: " << p;
       throw std::logic_error(msg.str());
     }
-	++p;
+  	++p;
   } else {
     msg << "Invalid character \'" << s[p] 
       << "\' in position: " << p;
     throw std::logic_error(msg.str());
   }
-
   return result;
 }
 double MultilineCalculator::Number(const std::string& s, size_t& p) {
@@ -163,37 +136,21 @@ double MultilineCalculator::Number(const std::string& s, size_t& p) {
 	  msg << "Invalid format of number " << number_text;
 	  throw std::logic_error(msg.str());
   }
-
   return result;
 }
 double MultilineCalculator::Term(const std::string& s, size_t& p) {
   char op = ' ';
-  double result = 0.0;
-  try {
-    result = Factor(s, p);
-  } catch (std::logic_error&) {
-    throw;
-  }
-
+  double result = Factor(s, p);
   while (p < s.length() && (s[p] == '*' || s[p] == '/')) {
     op = s[p];
     ++p;
     if (op == '*') {
-	  try {
-        result *= Factor(s, p);
-	  } catch (std::logic_error&) {
-	    throw;
-	  }
+      result *= Factor(s, p);
     } else if (op == '/') {
       /* variable pos is needed to propagate 
        information only if exception occured */
       size_t pos = p + 1;
-      double divisor = 1.0;
-	  try {
-	    divisor = Factor(s, p);
-	  } catch (std::logic_error&) {
-	    throw;
-	  }
+      double divisor = Factor(s, p);
       if (divisor == 0) {
         std::stringstream msg;
         msg << "Term - Division by zero in position: " << pos;
@@ -239,7 +196,6 @@ double MultilineCalculator::Identifier(const std::string& s, size_t& p) {
     msg << "Unknown identifier in position: " << p;
     throw std::logic_error(msg.str());
   }
-
   return it->second;
 }
 
@@ -265,8 +221,8 @@ int task4_6::solution::result_for( const std::string& key ) const
 		double value = calculator_.GetValueOf(key);
 		double x = 0.0;
 		result = (modf(value, &x) >= 0.5)
-			   ? static_cast<int>(x + 1.0)
-			   : static_cast<int>(x);
+  			   ? static_cast<int>(x + 1.0)
+	  		   : static_cast<int>(x);
 	} catch (std::logic_error& e) {
 		std::cerr << e.what() << std::endl;
 	}

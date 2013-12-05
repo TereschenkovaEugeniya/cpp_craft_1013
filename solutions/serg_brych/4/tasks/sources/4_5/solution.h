@@ -3,8 +3,8 @@
 
 #include <vector>
 #include <queue>
-#include <boost\thread.hpp>
-#include <boost\bind.hpp>
+#include <boost/thread.hpp>
+#include <boost/bind.hpp>
 
 
 

@@ -4,7 +4,6 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
-#include <boost/lexical_cast.hpp>
 
 using namespace std;
 
@@ -18,18 +17,14 @@ void Task35::Initialize() {
 
   unsigned curr_file_number = start_file_number_;
   while (curr_file_number < finish_file_number) {
-    string file_number;
-    try {
-      file_number = boost::lexical_cast<string>(curr_file_number);
-    } catch (const boost::bad_lexical_cast& ex) {
-      cout << "Task35::Initialize(): Error of conversion " << curr_file_number
-        << " into string. Reason: " << ex.what() << endl;
-      ++curr_file_number;
-      continue;
-    } // try , catch
+    stringstream msg;
+    stringstream file_number;
+
+    file_number << setw(3) << setfill('0') << curr_file_number;
+    ++curr_file_number;
 
     string in_fname = "Input_";
-    in_fname.append(file_number);
+    in_fname.append(file_number.str());
     in_fname.append(".txt");
 
 	  try {
@@ -50,6 +45,8 @@ void Task35::Initialize() {
 
 void Task35::Perform() {
 
+  static const char* kOutputFilename = "Output.txt";
+
   cout << "Task35::Perform has started. " << endl;
 
   for (size_t i = 0; i < workers_.size(); ++i)
@@ -57,5 +54,13 @@ void Task35::Perform() {
 
   workgroup_.join_all();
 
-  cout << "Task34::Perform has finished.\n";
+  ofstream ofs;
+  ofs.open(kOutputFilename, ios_base::binary);
+  if (!ofs.is_open()) {
+    cout << "Can't open file " << kOutputFilename << endl;
+    return;
+  }
+  statistics_.ReportAverageCounters(ofs);
+
+  cout << "Task35::Perform has finished.\n";
 }

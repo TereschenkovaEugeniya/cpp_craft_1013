@@ -51,7 +51,7 @@ const Message& Message::operator=(const Message& o) {
 }
 
 void Message::ReadFrom(istream& is) {
-  is.read(stock_name_, sizeof(stock_name_));
+  is.read(stock_name_, sizeof(stock_name_) - 1);
   is.read(date_time_, sizeof(date_time_));
   is.read(reinterpret_cast<char*>(&price_), sizeof(price_));
   is.read(reinterpret_cast<char*>(&vwap_), sizeof(vwap_));
@@ -68,8 +68,5 @@ void Message::WriteTo(ostream& os) const {
   os.write(reinterpret_cast<const char*>(&days_since_christmas_), sizeof(days_since_christmas_));
   os.write(reinterpret_cast<const char*>(&vwap_), sizeof(vwap_));
   os.write(reinterpret_cast<const char*>(&volume_), sizeof(volume_));
-
-  os.write(reinterpret_cast<const char*>(&f1_), sizeof(f1_));
-  os.write(reinterpret_cast<const char*>(&f4_), sizeof(f4_));
-  os.write(reinterpret_cast<const char*>(&f3_), sizeof(f3_));
+  os.write(reinterpret_cast<const char*>(&f2_), sizeof(f2_));
 }

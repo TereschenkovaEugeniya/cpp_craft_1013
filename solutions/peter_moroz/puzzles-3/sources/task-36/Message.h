@@ -24,7 +24,7 @@ public:
   }
                                                         
 private:
-  char stock_name_[8];
+  char stock_name_[9];
   char date_time_[8];
   double price_;
   double vwap_;
