@@ -6,5 +6,5 @@ find_package( Boost ${SEARCH_PARAMETERS} COMPONENTS
 	chrono
 )
 
-compile_project( ${module_name} "*.cpp" "*.h" BINARY binaries multicast_communication Boost )
+compile_project( ${module_name} "*.cpp" "*.h" BINARY binaries common multicast_communication Boost )
 
