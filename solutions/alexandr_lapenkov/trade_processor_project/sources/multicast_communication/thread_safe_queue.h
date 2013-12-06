@@ -2,6 +2,7 @@
 #define _TASK5_6_THREAD_SAFE_QUEUE_H_
 
 #include <cstdlib>
+
 #include <boost/thread.hpp>
 
 namespace multicast_communication
@@ -10,7 +11,9 @@ namespace multicast_communication
 	class thread_safe_queue
 	{
 		size_t elements_cnt;
-		mutable boost::mutex size_protector, front_protector, rear_protector, push_protector, pop_protector;
+		mutable boost::mutex size_protector, push_pop_protector;
+		bool interrupt_;
+		boost::condition_variable cond;
 
 		struct element
 		{
@@ -33,11 +36,12 @@ namespace multicast_communication
 
 		bool empty() const;
 		size_t size() const;
+		void interrupt();
 	};
 
 	template< typename T >
 	thread_safe_queue< T >::thread_safe_queue()
-		:elements_cnt( 0 ), front( NULL ), rear( NULL )
+		:elements_cnt( 0 ), front( NULL ), rear( NULL ), interrupt_( false )
 	{}
 
 	template< typename T >
@@ -51,53 +55,50 @@ namespace multicast_communication
 	template< typename T >
 	void thread_safe_queue< T >::push( const T& value )
 	{
-		boost::mutex::scoped_lock function_lock( push_protector );
+		boost::mutex::scoped_lock function_lock( push_pop_protector );
 		element *temp = new element( value );
 
+		if( rear == NULL )
 		{
-			boost::mutex::scoped_lock lock_rear( rear_protector );
-
-			if( rear == NULL )
-			{
-				boost::mutex::scoped_lock lock_front( front_protector );
-				front = rear = temp;
-			}
-			else
-			{
-				rear->next = temp;
-				rear = temp;
-			}
+			front = rear = temp;
+		}
+		else
+		{
+			rear->next = temp;
+			rear = temp;
 		}
 
 		boost::mutex::scoped_lock lock( size_protector );
 		++elements_cnt;
+
+		cond.notify_one();
 	}
 
 	template< typename T >
 	bool thread_safe_queue< T >::pop( T& var )
 	{
-		boost::mutex::scoped_lock function_lock( pop_protector );
+		boost::mutex::scoped_lock function_lock( push_pop_protector );
 		
-		if( empty() )
+		while( empty() && !interrupt_ )
+			cond.wait( function_lock );
+	
+		if( interrupt_ )
 			return false;
+
+		var = front->value;
+
+		if( front == rear )
 		{
-			boost::mutex::scoped_lock lock_front( front_protector );
-			var = front->value;
+			delete front;
+			front = rear = NULL;
 		}
+		else 
 		{
-			boost::mutex::scoped_lock lock_rear( rear_protector ), lock_front( front_protector );
-			if( front == rear )
-			{
-				delete front;
-				front = rear = NULL;
-			}
-			else 
-			{
-				element *move_to = front->next;
-				delete front;
-				front = move_to;
-			}
+			element *move_to = front->next;
+			delete front;
+			front = move_to;
 		}
+
 		boost::mutex::scoped_lock lock( size_protector );
 		--elements_cnt;
 
@@ -115,6 +116,15 @@ namespace multicast_communication
 	{
 		boost::mutex::scoped_lock lock( size_protector );
 		return elements_cnt;
+	}
+
+	template< typename T >
+	void thread_safe_queue< T >::interrupt()
+	{
+		boost::mutex::scoped_lock function_lock( push_pop_protector );
+		interrupt_ = true;
+		function_lock.unlock();
+		cond.notify_all();
 	}
 
 }

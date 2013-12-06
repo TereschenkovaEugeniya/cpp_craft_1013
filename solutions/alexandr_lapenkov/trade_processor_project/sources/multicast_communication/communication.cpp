@@ -61,8 +61,10 @@ void multicast_communication::communication::stop()
 		boost::mutex::scoped_lock lock( interrupt_protector );
 		interrupt = true;
 	}
-	quote_threads.join_all();
+	trade_queue.interrupt();
+	quote_queue.interrupt();
 	trade_threads.join_all();
+	quote_threads.join_all();
 }
 
 void multicast_communication::communication::new_message( const std::string& msg, message_type mt )
@@ -74,31 +76,29 @@ void multicast_communication::communication::new_message( const std::string& msg
 
 void multicast_communication::communication::process_trade()
 {
-	while( true )
+	std::string str;
+	while( true ) 
 	{
 		if( interrupt )
 			return ;
-		if( !trade_queue.empty() )
-		{
-			std::string str;
-			trade_queue.pop( str );
+		if( trade_queue.pop( str ) )
 			processor->parse( str, TRADE );
-		}
+		else
+			return ;
 	}
 }
 
 void multicast_communication::communication::process_quote()
-{
+{	
+	std::string str;
 	while( true )
 	{
 		if( interrupt )
 			return ;
-		if( !quote_queue.empty() )
-		{
-			std::string str;
-			quote_queue.pop( str );
+		if( quote_queue.pop( str ) )
 			processor->parse( str, QUOTE );
-		}
+		else
+			return ;
 	}
 }
 

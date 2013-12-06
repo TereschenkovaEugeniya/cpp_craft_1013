@@ -31,7 +31,6 @@ namespace multicast_communication
 
 	private:
 		boost::mutex interrupt_protector;
-		bool interrupt;
 		const size_t trade_thread_size;
 		const size_t quote_thread_size;
 		const std::vector< address >& trade_ports;
@@ -44,6 +43,7 @@ namespace multicast_communication
 
 	public:
 		processor_ptr processor;
+		bool interrupt;
 	
 		explicit communication 
 			(	const size_t trade_thread_size,

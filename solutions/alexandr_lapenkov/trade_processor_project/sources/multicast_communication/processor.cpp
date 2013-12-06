@@ -33,7 +33,7 @@ namespace multicast_communication
 				if( !in.good() || !c )
 					break;
 				if( c != SOH )
-					throw std::logic_error( "Wrong transfer block" );
+					return ;
 				in_block = true;
 			}
 			else
@@ -59,7 +59,7 @@ namespace multicast_communication
 				if( after_message == EOT )
 					in_block = false;
 				else
-					throw std::logic_error( "Wrong transfer block" );
+					return ;
 			}
 		}
 	}

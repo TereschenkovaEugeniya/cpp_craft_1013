@@ -16,8 +16,10 @@ namespace multicast_communication
 void multicast_communication::tests_::trade_message_tests()
 {
 	trade_message_ptr tm( new trade_message( &callback ) );
-	std::string cut_trade = "AO A  000146234N:3]004ACN             0     000 F  1  D000000779000000000100DD 0";
-	std::stringstream stream( cut_trade );
-	binreader in( stream );
-	BOOST_CHECK_NO_THROW( tm->parse( in, 'E', 'B' ) );
+	std::string message;
+	std::ifstream in( SOURCE_DIR"/tests/data/trade_messages" );
+	std::getline( in, message );
+	std::stringstream stream( message.substr( 3 ) );
+	binreader reader( stream );
+	BOOST_CHECK_NO_THROW( tm->parse( reader, 'E', 'B' ) );
 }

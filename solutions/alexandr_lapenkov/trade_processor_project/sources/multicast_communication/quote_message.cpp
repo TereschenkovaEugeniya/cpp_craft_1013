@@ -67,7 +67,7 @@ namespace multicast_communication
 			handler( shared_from_this() );
 		}
 		else
-			throw std::logic_error( "Unhandled message type" );
+			return ;
 	}
 
 }

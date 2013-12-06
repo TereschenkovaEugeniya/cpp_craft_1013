@@ -2,6 +2,7 @@
 #include <udp_listener.h>
 
 #include <fstream>
+#include <string>
 
 #include <boost/filesystem.hpp>
 
@@ -40,7 +41,9 @@ void multicast_communication::tests_::communication_and_listener_tests()
 		communication receiver( 2, 2, trade_ports, quote_ports, processor_ptr( new processor( "market_data.dat" ) ) );
 		receiver.start();
 
-		std::string message = "\x01""EDEO A  004391904Z:J_073BUDR  B00010484003 B00010490003 02EDEO A  004391905Z:J_074BUDR  B00010483006 B00010490003 02""\x03";
+		std::string message;
+		std::ifstream in( SOURCE_DIR"/tests/data/quote_messages" );
+		std::getline( in, message );
 		boost::asio::ip::udp::endpoint endpoint( boost::asio::ip::address::from_string( "224.0.0.0" ), 49000 ); 
 		boost::asio::ip::udp::socket socket( io, endpoint.protocol() );
      
@@ -53,11 +56,10 @@ void multicast_communication::tests_::communication_and_listener_tests()
 				}
 				boost::this_thread::sleep_for( boost::chrono::milliseconds( 150 ) );
 			);
-		BOOST_CHECK_THROW
+		BOOST_CHECK_NO_THROW
 			(
 				message = "abc";
 				receiver.processor->parse( message, QUOTE );
-				, std::logic_error
 			);
 		receiver.stop();
 	}

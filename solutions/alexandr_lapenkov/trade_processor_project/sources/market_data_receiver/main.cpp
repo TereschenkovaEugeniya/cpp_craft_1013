@@ -22,14 +22,18 @@ namespace multicast_communication
 		std::vector< address > trade_ports, quote_ports;
 
 		size_t trade_thread_size, quote_thread_size, 
-			trade_ports_amount, quote_ports_amount, trade_port;
+			trade_ports_amount, quote_ports_amount;
+		unsigned short trade_port;
 
 		std::string ip_address; 
 		static boost::shared_ptr< communication > c;
 
 		static void button_handler( int )
 		{
-			c->stop();
+			if( c.get() != NULL )
+				c->stop();
+			else
+				exit( 0 );
 		}
 
 	public:

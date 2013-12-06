@@ -5,16 +5,17 @@
 void multicast_communication::tests_::processor_tests()
 {
 	{
-		std::string message = "\x01""EDEO A  004391904Z:J_073BUDR  B00010484003 B00010490003 02EDEO A  004391905Z:J_074BUDR  B00010483006 B00010490003 02""\x03";
+		std::string message;
+		std::ifstream in( SOURCE_DIR"/tests/data/quote_messages" );
+		std::getline( in, message );
 		processor p( "market_data.dat" );
 		BOOST_CHECK_NO_THROW( p.parse( message, QUOTE ) )
-		message = "EDEO A  004391904Z:J_073BUDR  B00010484003 B00010490003 02EDEO A  004391905Z:J_074BUDR  B00010483006 B00010490003 02""\x03";
-		BOOST_CHECK_THROW( p.parse( message, QUOTE ), std::logic_error );
-		message = "\x01""EDEO A  004391904Z:J_073BUDR  B00010484003 B00010490003 02EDEO A  004391905Z:J_074BUDR  B00010483006 B00010490003 02";
-		BOOST_CHECK_THROW( p.parse( message, QUOTE ), std::logic_error );
-		message = "\x01""EBAO A  000146234N:3]004ACN             0     000 F  1  D000000779000000000100DD 0""\x03";
+		BOOST_CHECK_NO_THROW( p.parse( message.substr( 1 ), QUOTE ) );
+		BOOST_CHECK_NO_THROW( p.parse( message.substr( 0, message.length() - 1 ), QUOTE ) );
+		in.close();
+		in.open( SOURCE_DIR"/tests/data/trade_messages", std::ios_base::in );
 		BOOST_CHECK_NO_THROW( p.parse( message, TRADE ) );
 		message = "wrong trade";
-		BOOST_CHECK_THROW( p.parse( message, TRADE ), std::logic_error );
+		BOOST_CHECK_NO_THROW( p.parse( message, TRADE ) );
 	}
 }
