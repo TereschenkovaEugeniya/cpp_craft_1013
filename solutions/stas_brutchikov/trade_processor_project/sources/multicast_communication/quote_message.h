@@ -16,6 +16,8 @@ namespace multicast_communication
 	};
 
 	typedef boost::shared_ptr< quote_message > quote_message_ptr;
+
+    std::ostream& operator << ( std::ostream& out, const quote_message_ptr& msg );
 }
 
 #endif // _MULTICAST_COMMUNICATION_QUOTE_MESSAGE_H_

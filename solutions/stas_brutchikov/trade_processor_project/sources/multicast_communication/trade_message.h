@@ -14,6 +14,8 @@ namespace multicast_communication
 	};
 
 	typedef boost::shared_ptr< trade_message > trade_message_ptr;
+
+    std::ostream& operator << ( std::ostream& out, const trade_message_ptr& msg );
 }
 
 #endif // _MULTICAST_COMMUNICATION_TRADE_MESSAGE_H_
