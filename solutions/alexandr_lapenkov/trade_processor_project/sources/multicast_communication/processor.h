@@ -30,7 +30,7 @@ namespace multicast_communication
 	
 	public:
 		explicit processor();
-		explicit processor( std::string filename );
+		explicit processor( const std::string& filename );
 		virtual ~processor();
 		void parse( std::string& in, message_type mt );
 		virtual void new_trade( const trade_message_ptr& );

@@ -9,7 +9,7 @@ namespace multicast_communication
 	processor::processor()
 	{}
 
-	processor::processor( std::string filename )
+	processor::processor( const std::string& filename )
 	{
 		out.open( boost::lexical_cast< std::string >( SOURCE_DIR ) + "/" + filename );
 	}
