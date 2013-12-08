@@ -1,65 +1,172 @@
 #include "market_data_receiver.h"
+#include <iostream>
 
 namespace multicast_communication
 {
-
-market_data_receiver::market_data_receiver( boost::asio::io_service& io_service, const std::string& multicast_address, unsigned short port )
-	: io_service_( io_service )
-	, listen_endpoint_( boost::asio::ip::address::from_string( "0.0.0.0" ), port )
-	, socket_( io_service_ )
-	, multicast_address_( multicast_address )
-{
-	socket_reload_();
-	register_listen_();
-}
-
-market_data_receiver::~market_data_receiver()
-{
-}
-
-const std::vector< std::string > market_data_receiver::messages() const
-{
-	boost::mutex::scoped_lock lock( protect_messages_ );
-	return messages_;
-}
-
-void market_data_receiver::socket_reload_()
-{
-	using boost::asio::ip::udp;
-	using boost::asio::ip::address;
-	using boost::asio::ip::multicast::join_group;
-
-	socket_.open( listen_endpoint_.protocol() );
-	socket_.set_option( udp::socket::reuse_address( true ) );
-	socket_.bind( listen_endpoint_ );
-	socket_.set_option( join_group( address::from_string( multicast_address_ ) ) );
-}
-
-void market_data_receiver::register_listen_()
-{
-	boost::shared_ptr<std::string> buf = boost::shared_ptr<std::string>(new std::string(1000, '\0'));
-
-	char* const buf_start = &(*buf->begin());
-
-	using namespace boost::asio::placeholders;
-	socket_.async_receive(boost::asio::buffer(buf_start, 1000),
-        boost::bind(&market_data_receiver::listen_handler_, this, buf, _1, _2));
-}
-
-void market_data_receiver::listen_handler_(boost::shared_ptr<std::string> buf, const boost::system::error_code& error, const size_t bytes_received)
-{
-	if ( error )
+	market_data_receiver::market_data_receiver(const size_t& trade_thread_size,
+												const size_t& quote_thread_size,
+												const std::vector<std::pair<std::string, unsigned short> >& trade_ports,
+												const std::vector<std::pair<std::string, unsigned short> >& quote_ports,
+												market_data_processor& processor) : processor_(processor)
 	{
-		return;
+		initialize(trade_thread_size, quote_thread_size, trade_ports, quote_ports);		
 	}
-	else
+
+	market_data_receiver::market_data_receiver(const std::string& file_name,
+												market_data_processor& processor) : processor_(processor)
 	{
+		std::ifstream input(file_name);
+
+		if (input.good())
 		{
-			boost::mutex::scoped_lock lock( protect_messages_ );
-			messages_.push_back( std::string(buf->c_str(), bytes_received ) );
+			size_t trade_thread_size;
+			size_t quote_thread_size;
+			size_t trade_ports_amount;
+			size_t quote_ports_amount;
+			std::vector<std::pair<std::string, unsigned short> > trade_ports;
+			std::vector<std::pair<std::string, unsigned short> > quote_ports;
+
+			input >> trade_thread_size;
+			input >> quote_thread_size;
+			input >> trade_ports_amount;
+
+			while (trade_ports_amount)
+			{
+				std::string ip;
+				unsigned short port;
+
+				input >> ip >> port;
+
+				trade_ports.push_back(std::make_pair(ip, port));
+
+				--trade_ports_amount;
+			}
+
+			input >> quote_ports_amount;
+
+			while (quote_ports_amount)
+			{
+				std::string ip;
+				unsigned short port;
+
+				input >> ip >> port;
+
+				quote_ports.push_back(std::make_pair(ip, port));
+
+				--quote_ports_amount;
+			}
+
+			initialize(trade_thread_size, quote_thread_size, trade_ports, quote_ports);
 		}
-		register_listen_();
+	}
+
+	void market_data_receiver::initialize(const size_t& trade_thread_size,
+											const size_t& quote_thread_size,
+											const std::vector<std::pair<std::string, unsigned short> >& trade_ports,
+											const std::vector<std::pair<std::string, unsigned short> >& quote_ports)
+	{
+		for (auto it = trade_ports.begin(); it != trade_ports.end(); ++it)
+		{
+			boost::shared_ptr<market_data_connector> connector(new market_data_connector(io_service_trade_, it->first, it->second, trades_));
+			connectors_.push_back(connector);
+		}
+
+		for (auto it = quote_ports.begin(); it != quote_ports.end(); ++it)
+		{
+			boost::shared_ptr<market_data_connector> connector(new market_data_connector(io_service_quote_, it->first, it->second, quotes_));
+			connectors_.push_back(connector);
+		}
+
+		for (int i = 0; i < trade_thread_size; ++i)
+		{
+			boost::thread trade_thread(boost::bind(&market_data_receiver::service_thread, this, boost::ref(io_service_trade_)));
+		}
+
+		for (int i = 0; i < quote_thread_size; ++i)
+		{
+			boost::thread trade_thread(boost::bind(&market_data_receiver::service_thread, this, boost::ref(io_service_quote_)));
+		}
+	
+		work_threads_.create_thread(boost::bind(&market_data_receiver::trades_thread, this));
+		work_threads_.create_thread(boost::bind(&market_data_receiver::quotes_thread, this));
+	}
+	
+	void market_data_receiver::service_thread(boost::asio::io_service& service)
+	{
+		service.run();
+	}
+
+	void market_data_receiver::trades_thread()
+	{
+		while (true)
+		{
+			std::string block;
+			if (trades_.pop(block))
+			{
+				char us = 0x1F;
+				char soh = 0x01;
+				char etx = 0x03;
+				std::string msg;
+				for (auto it = block.begin(); it != block.end(); ++it)
+				{
+					if (*it == us || *it == etx)
+					{
+						trade_message_ptr trade(new trade_message);
+						if (trade->initialize(msg))
+						{
+							processor_.new_trade(trade);
+						}
+						msg.clear();
+					}
+					else if (*it != soh)
+					{
+						msg.push_back(*it);
+					}
+
+					if (*it == etx)
+					{
+						break;
+					}
+
+				}
+			}			
+		}
+	}
+
+	void market_data_receiver::quotes_thread()
+	{
+		while (true)
+		{
+			std::string block;
+			if (quotes_.pop(block))
+			{
+				char us = 0x1F;
+				char soh = 0x01;
+				char etx = 0x03;
+				std::string msg;
+				for (auto it = block.begin(); it != block.end(); ++it)
+				{
+					if (*it == us || *it == etx)
+					{
+						quote_message_ptr quote(new quote_message);
+						if (quote->initialize(msg))
+						{
+							processor_.new_quote(quote);
+						}
+						msg.clear();
+					}
+					else if (*it != soh)
+					{
+						msg.push_back(*it);
+					}
+
+					if (*it == etx)
+					{
+						break;
+					}
+
+				}
+			}			
+		}
 	}
 }
-
-} // namespace multicast_communication

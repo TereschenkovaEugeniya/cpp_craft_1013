@@ -1,36 +1,44 @@
-#ifndef _MULTICAST_COMMUNICATION_MARKET_DATA_RECEIVER_H_
-#define _MULTICAST_COMMUNICATION_MARKET_DATA_RECEIVER_H_
+#pragma once
 
-#include <string>
-#include <vector>
+#include "market_data_connector.h"
+#include "market_data_processor.h"
+#include <fstream>
 
-#include <boost/noncopyable.hpp>
-#include <boost/asio.hpp>
-#include <boost/thread.hpp>
 
 namespace multicast_communication
 {
 	class market_data_receiver : private boost::noncopyable
 	{
-		boost::asio::io_service& io_service_;
+		task5_6::thread_safe_queue<std::string> quotes_;
+		task5_6::thread_safe_queue<std::string> trades_;
 
-		boost::asio::ip::udp::endpoint listen_endpoint_;
-		boost::asio::ip::udp::socket socket_;
+		boost::asio::io_service io_service_trade_;
+		boost::asio::io_service io_service_quote_;
 
-		std::string multicast_address_;
+		std::list<boost::shared_ptr<market_data_connector> > connectors_;
 
-		mutable boost::mutex protect_messages_;
-		std::vector< std::string > messages_;
+		boost::thread_group work_threads_;
+
+		market_data_processor& processor_;
 
 	public:
-		explicit market_data_receiver(boost::asio::io_service& io_service, const std::string& multicast_address, unsigned short port);
-		~market_data_receiver();
-		const std::vector<std::string> messages() const;
+		explicit market_data_receiver(const size_t& trade_thread_size,
+										const size_t& quote_thread_size,
+										const std::vector<std::pair<std::string, unsigned short> >& trade_ports,
+										const std::vector<std::pair<std::string, unsigned short> >& quote_ports,
+										market_data_processor& processor);
+
+		explicit market_data_receiver(const std::string& file_name,
+										market_data_processor& processor);
+
 	private:
-		void socket_reload_();
-		void register_listen_();
-		void listen_handler_(boost::shared_ptr<std::string> buf, const boost::system::error_code& error, const size_t bytes_received);
+		void service_thread(boost::asio::io_service& service);
+		void trades_thread();
+		void quotes_thread();
+
+		void initialize(const size_t& trade_thread_size,
+										const size_t& quote_thread_size,
+										const std::vector<std::pair<std::string, unsigned short> >& trade_ports,
+										const std::vector<std::pair<std::string, unsigned short> >& quote_ports);
 	};
 }
-
-#endif // _MULTICAST_COMMUNICATION_MARKET_DATA_RECEIVER_H_
