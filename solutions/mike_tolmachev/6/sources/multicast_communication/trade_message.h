@@ -3,11 +3,15 @@
 
 #include <boost/shared_ptr.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/assign.hpp>
+#include <map>
 
 namespace multicast_communication
 {
 	class trade_message
 	{
+		std::map<char, double> denominators_;
+
 		std::string security_symbol_;
 		double price_;
 		double volume_;

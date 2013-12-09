@@ -7,13 +7,13 @@ namespace multicast_communication
 												const size_t& quote_thread_size,
 												const std::vector<std::pair<std::string, unsigned short> >& trade_ports,
 												const std::vector<std::pair<std::string, unsigned short> >& quote_ports,
-												market_data_processor& processor) : processor_(processor)
+												market_data_processor& processor) : processor_(processor), working_(false)
 	{
 		initialize(trade_thread_size, quote_thread_size, trade_ports, quote_ports);		
 	}
 
 	market_data_receiver::market_data_receiver(const std::string& file_name,
-												market_data_processor& processor) : processor_(processor)
+												market_data_processor& processor) : processor_(processor), working_(false)
 	{
 		std::ifstream input(file_name);
 
@@ -60,11 +60,33 @@ namespace multicast_communication
 		}
 	}
 
+	market_data_receiver::~market_data_receiver()
+	{
+		stop();
+	}
+
+	void market_data_receiver::stop()
+	{
+		if (!working_)
+		{
+			return;
+		}
+
+		working_ = false;
+
+		io_service_trade_.stop();
+		io_service_quote_.stop();
+
+		work_threads_.join_all();
+	}
+
 	void market_data_receiver::initialize(const size_t& trade_thread_size,
 											const size_t& quote_thread_size,
 											const std::vector<std::pair<std::string, unsigned short> >& trade_ports,
 											const std::vector<std::pair<std::string, unsigned short> >& quote_ports)
 	{
+		working_ = true;
+
 		for (auto it = trade_ports.begin(); it != trade_ports.end(); ++it)
 		{
 			boost::shared_ptr<market_data_connector> connector(new market_data_connector(io_service_trade_, it->first, it->second, trades_));
@@ -79,12 +101,14 @@ namespace multicast_communication
 
 		for (int i = 0; i < trade_thread_size; ++i)
 		{
-			boost::thread trade_thread(boost::bind(&market_data_receiver::service_thread, this, boost::ref(io_service_trade_)));
+			work_threads_.create_thread(boost::bind(&market_data_receiver::service_thread, this, boost::ref(io_service_trade_)));
+			//boost::thread trade_thread(boost::bind(&market_data_receiver::service_thread, this, boost::ref(io_service_trade_)));
 		}
 
 		for (int i = 0; i < quote_thread_size; ++i)
 		{
-			boost::thread trade_thread(boost::bind(&market_data_receiver::service_thread, this, boost::ref(io_service_quote_)));
+			work_threads_.create_thread(boost::bind(&market_data_receiver::service_thread, this, boost::ref(io_service_quote_)));
+			//boost::thread trade_thread(boost::bind(&market_data_receiver::service_thread, this, boost::ref(io_service_quote_)));
 		}
 	
 		work_threads_.create_thread(boost::bind(&market_data_receiver::trades_thread, this));
@@ -98,7 +122,7 @@ namespace multicast_communication
 
 	void market_data_receiver::trades_thread()
 	{
-		while (true)
+		while (working_)
 		{
 			std::string block;
 			if (trades_.pop(block))
@@ -135,7 +159,7 @@ namespace multicast_communication
 
 	void market_data_receiver::quotes_thread()
 	{
-		while (true)
+		while (working_)
 		{
 			std::string block;
 			if (quotes_.pop(block))

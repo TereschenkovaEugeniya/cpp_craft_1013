@@ -7,6 +7,8 @@ multicast_communication::quote_message::quote_message() : security_symbol_(""),
 															offer_price_(0),
 															offer_volume_(0)
 {
+	denominators_ = boost::assign::map_list_of( '3' , 8.0 ) ( '4' , 16.0 ) ( '5' , 32.0 ) ( '6' , 64.0 ) ( '7' , 128.0 ) ( '8' , 256.0 )
+		( 'A' , 10.0 ) ( 'B' , pow( 10.0, 2 ) ) ( 'C' , pow( 10.0, 3 ) ) ( 'D' , pow( 10.0, 4 ) ) ( 'E' , pow( 10.0, 5 ) ) ( 'F' , pow( 10.0, 6 ) ) ( 'G' , pow( 10.0, 7 ) ) ( 'H' , pow( 10.0, 8 ) );
 }
 
 std::string multicast_communication::quote_message::security_symbol() const
@@ -67,11 +69,25 @@ bool multicast_communication::quote_message::init_short(const std::string& body)
 
 	security_symbol_ = body.substr(0, 3);
 
-	double bid_denominator = body[6];
+	double bid_denominator = 1;
+	try
+	{
+		bid_denominator = denominators_.at(body[6]);
+	}
+	catch(std::out_of_range)
+	{
+	}
 	std::string bid_short_price = body.substr(7, 8);
 	std::string bid_volume = body.substr(15, 3);
 	
-	double offer_denominator = body[19];
+	double offer_denominator = 1;
+	try
+	{
+		offer_denominator = denominators_.at(body[19]);
+	}
+	catch(std::out_of_range)
+	{
+	}
 	std::string offer_price = body.substr(20, 8);
 	std::string offer_volume = body.substr(28, 3);
 	
@@ -93,11 +109,25 @@ bool multicast_communication::quote_message::init_long(const std::string& body)
 
 	security_symbol_ = body.substr(0, 11);
 
-	double bid_denominator = body[27];
+	double bid_denominator = 1;
+	try
+	{
+		bid_denominator = denominators_.at(body[27]);
+	}
+	catch(std::out_of_range)
+	{
+	}
 	std::string bid_short_price = body.substr(28, 12);
 	std::string bid_volume = body.substr(40, 7);
 	
-	double offer_denominator = body[47];
+	double offer_denominator = 1;
+	try
+	{
+		offer_denominator = denominators_.at(body[47]);
+	}
+	catch(std::out_of_range)
+	{
+	}
 	std::string offer_price = body.substr(48, 12);
 	std::string offer_volume = body.substr(60, 7);
 	

@@ -21,6 +21,8 @@ namespace multicast_communication
 
 		market_data_processor& processor_;
 
+		bool working_;
+
 	public:
 		explicit market_data_receiver(const size_t& trade_thread_size,
 										const size_t& quote_thread_size,
@@ -30,6 +32,10 @@ namespace multicast_communication
 
 		explicit market_data_receiver(const std::string& file_name,
 										market_data_processor& processor);
+
+		~market_data_receiver();
+
+		void stop();
 
 	private:
 		void service_thread(boost::asio::io_service& service);

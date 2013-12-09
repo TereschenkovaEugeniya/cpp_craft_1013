@@ -3,7 +3,9 @@
 #include <boost/thread.hpp>
 #include <csignal>
 
-void signal_handler(boost::condition_variable& cond, int)
+boost::condition_variable cond;
+
+void signal_handler(int)
 {
 	cond.notify_all();
 }
@@ -13,14 +15,14 @@ int main()
     using namespace multicast_communication;
     
 	std::string config_path(SOURCE_DIR "/tests/data/config.ini");
+	std::ofstream processor_output(BINARY_DIR "/market_data.dat");
 
-	market_data_processor_helper processor;
+	market_data_processor_helper processor(processor_output);
 	market_data_receiver receiver(config_path, processor);
 
 	boost::mutex mtx;
-	boost::condition_variable cond;
 
-	std::signal(SIGINT, boost::bind(&signal_handler, boost::ref(cond)));
+	std::signal(SIGINT, signal_handler);
 	boost::mutex::scoped_lock lock(mtx);
 	cond.wait(lock);
 }
