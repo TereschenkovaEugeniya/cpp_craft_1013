@@ -12,6 +12,8 @@ namespace common
 	public:
 		explicit address( const std::string&, const unsigned short );
 		boost::asio::ip::udp::endpoint endpoint() const;
+		std::string ip() const;
+		unsigned short port() const;
 	};
 
 	typedef std::vector< address > addresses;

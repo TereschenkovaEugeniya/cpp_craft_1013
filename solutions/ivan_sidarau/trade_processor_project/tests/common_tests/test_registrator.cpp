@@ -15,9 +15,7 @@
 
 	master_test_suite.add( BOOST_TEST_CASE( &address_tests ) );
 	master_test_suite.add( BOOST_TEST_CASE( &config_reader_tests ) );
-	//master_test_suite.add( BOOST_TEST_CASE( &trade_message_tests ) );
-
-	//master_test_suite.add( BOOST_TEST_CASE( &market_data_processor_tests ) );
+	master_test_suite.add( BOOST_TEST_CASE( &buffer_tests ) );
 
 #ifdef RUN_PERFORMANCE_TESTS
 #endif

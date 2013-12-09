@@ -10,3 +10,12 @@ boost::asio::ip::udp::endpoint common::address::endpoint() const
 {
 	return boost::asio::ip::udp::endpoint( boost::asio::ip::address::from_string( ip_ ), port_ );
 }
+
+std::string common::address::ip() const
+{
+	return ip_;
+}
+unsigned short common::address::port() const
+{
+	return port_;
+}

@@ -6,5 +6,6 @@ namespace common
 	{
 		void address_tests();
 		void config_reader_tests();
+		void buffer_tests();
 	}
 }
