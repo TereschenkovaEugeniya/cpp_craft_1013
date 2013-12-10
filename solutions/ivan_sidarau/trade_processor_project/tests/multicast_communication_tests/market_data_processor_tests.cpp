@@ -4,8 +4,5 @@
 
 void multicast_communication::tests_::market_data_processor_tests()
 {
-	BOOST_CHECK_NO_THROW
-	( 
-		market_data_processor_test_helper mdpth;
-	)
+	BOOST_CHECK_NO_THROW( market_data_processor_test_helper mdpth; );
 }

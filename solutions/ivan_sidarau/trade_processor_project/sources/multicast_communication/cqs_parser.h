@@ -18,6 +18,7 @@ namespace multicast_communication
 	protected:
 		explicit quote_processor(){}
 		virtual ~quote_processor(){}
+
 		virtual void new_quote( quote_message_ptr& new_message ) = 0;
 	};
 	class cqs_parser : virtual protected boost::noncopyable
@@ -33,7 +34,7 @@ namespace multicast_communication
 		explicit cqs_parser();
 		~cqs_parser();
 
-		void process_message( const common::buffer_ptr new_message );
+		void process_message( const common::buffer_ptr new_message, const size_t size );
 	};
 }
 

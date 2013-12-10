@@ -1,5 +1,6 @@
 #include <processors_test_helper.h>
 
+
 void multicast_communication::tests_::market_data_receiver_manager_test_helper::cts_line_message( 
 	const common::buffer_ptr ptr, const size_t size )
 {

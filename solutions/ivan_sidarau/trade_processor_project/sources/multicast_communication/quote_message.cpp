@@ -1,9 +1,9 @@
 #include "quote_message.h"
 
 
-std::string multicast_communication::quote_message::security_symbol() const
+const std::string& multicast_communication::quote_message::security_symbol() const
 {
-	return "";
+	return security_symbol_;
 }
 
 double multicast_communication::quote_message::bid_price() const

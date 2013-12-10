@@ -7,8 +7,9 @@ namespace multicast_communication
 {
 	class quote_message
 	{
+		std::string security_symbol_;
 	public:
-		std::string security_symbol() const;
+		const std::string& security_symbol() const;
 		double bid_price() const;
 		double bid_volume() const;
 		double offer_price() const;

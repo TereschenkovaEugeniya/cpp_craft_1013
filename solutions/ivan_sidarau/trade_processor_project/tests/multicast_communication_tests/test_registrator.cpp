@@ -19,6 +19,11 @@
 	master_test_suite.add( BOOST_TEST_CASE( &market_data_processor_tests ) );
 	master_test_suite.add( BOOST_TEST_CASE( &market_data_receiver_tests ) );
 
+	master_test_suite.add( BOOST_TEST_CASE( &cts_protocol_tests ) );
+	master_test_suite.add( BOOST_TEST_CASE( &cts_parser_tests ) );
+
+	master_test_suite.add( BOOST_TEST_CASE( &cqs_parser_tests ) );
+
 #ifdef RUN_PERFORMANCE_TESTS
 #endif
 

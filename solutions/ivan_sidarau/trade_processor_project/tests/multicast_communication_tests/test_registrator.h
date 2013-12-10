@@ -9,5 +9,10 @@ namespace multicast_communication
 
 		void market_data_processor_tests();
 		void market_data_receiver_tests();
+
+		void cts_protocol_tests();
+		void cts_parser_tests();
+
+		void cqs_parser_tests();
 	}
 }
