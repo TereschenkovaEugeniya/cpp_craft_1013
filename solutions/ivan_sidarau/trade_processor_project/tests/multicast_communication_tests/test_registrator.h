@@ -13,6 +13,7 @@ namespace multicast_communication
 		void cts_protocol_tests();
 		void cts_parser_tests();
 
+		void cqs_protocol_tests();
 		void cqs_parser_tests();
 	}
 }

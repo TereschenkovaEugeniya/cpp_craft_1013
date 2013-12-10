@@ -22,6 +22,7 @@
 	master_test_suite.add( BOOST_TEST_CASE( &cts_protocol_tests ) );
 	master_test_suite.add( BOOST_TEST_CASE( &cts_parser_tests ) );
 
+	master_test_suite.add( BOOST_TEST_CASE( &cqs_protocol_tests ) );
 	master_test_suite.add( BOOST_TEST_CASE( &cqs_parser_tests ) );
 
 #ifdef RUN_PERFORMANCE_TESTS

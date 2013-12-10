@@ -30,13 +30,19 @@ namespace multicast_communication
 			ETX = 0x03,
 			US = 0x1F
 		};
+	private:
+		quote_processor& quote_processor_;
 	public:
-		explicit cqs_parser();
+		explicit cqs_parser( quote_processor& );
 		~cqs_parser();
 
 		void process_message( const common::buffer_ptr new_message, const size_t size );
+	private:
+		void filter_messages_( const char* parsing_ptr, size_t size );
+		const char* parse_short_quote_( const char* parsing_ptr, size_t size );
+		const char* parse_long_quote_( const char* parsing_ptr, size_t size );
 	};
 }
 
-#endif // _MULTICAST_COMMUNICATION_CTS_PARSER_H_
+#endif // _MULTICAST_COMMUNICATION_CQS_PARSER_H_
 

@@ -22,6 +22,27 @@ namespace multicast_communication
 			size_t send_cqs_file( const std::string& file_name, const cta_functor& );
 			template< typename cta_functor >
 			size_t send_file_with_delimeter( const std::string& file_name, const char delimeter, const cta_functor& );
+
+
+			template< typename parser_type >
+			class send_to_processor
+			{
+				parser_type& parser_;
+			public:
+				explicit send_to_processor( parser_type& parser )
+					: parser_( parser )
+				{
+				}
+				void operator()( const char* const buff, const size_t size ) const
+				{
+					common::buffer_ptr ptr( new common::buffer() );
+					memcpy( ptr->data, buff, size );
+
+					parser_.process_message( ptr, size );
+				}
+			};
+
+
 		}
 	}
 }

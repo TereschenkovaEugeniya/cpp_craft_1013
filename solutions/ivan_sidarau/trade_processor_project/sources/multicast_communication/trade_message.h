@@ -12,8 +12,6 @@ namespace multicast_communication
 		std::string security_symbol_;
 		double price_;
 		double volume_;
-
-		size_t time_;
 	public:
 		explicit trade_message();
 		explicit trade_message( const cts_protocol::message_header&, const cts_protocol::short_trade& );

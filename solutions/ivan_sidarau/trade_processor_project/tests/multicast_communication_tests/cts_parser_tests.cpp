@@ -12,22 +12,6 @@ namespace multicast_communication
 	{
 		namespace detail
 		{
-			class send_to_processor
-			{
-				cts_parser& parser_;
-			public:
-				explicit send_to_processor( cts_parser& parser )
-					: parser_( parser )
-				{
-				}
-				void operator()( const char* const buff, const size_t size ) const
-				{
-					common::buffer_ptr ptr( new common::buffer() );
-					memcpy( ptr->data, buff, size );
-
-					parser_.process_message( ptr, size );
-				}
-			};
 
 			class trade_processor_test_helper : public trade_processor
 			{
@@ -71,7 +55,7 @@ void multicast_communication::tests_::cts_parser_tests()
 
 			if ( boost::regex_match( filename, trade_file_check ) )
 			{
-				const size_t sended_messages_size = detail::send_cts_file( filename, detail::send_to_processor( parser ) );
+				const size_t sended_messages_size = detail::send_cts_file( filename, detail::send_to_processor< cts_parser >( parser ) );
 
 				BOOST_CHECK_EQUAL( sended_messages_size, 500ul );
 				BOOST_CHECK_EQUAL( tpth.amount_of_messages_ >= 499ul, true );

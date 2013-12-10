@@ -52,9 +52,16 @@ void multicast_communication::cts_parser::filter_messages_( const char* parsing_
 		}
 		else 
 			after_parsing_ptr = std::find( parsing_ptr, after_parsing_ptr, cts_parser::US );
-		const size_t diff = after_parsing_ptr - parsing_ptr;
+
+		size_t diff = after_parsing_ptr - parsing_ptr;
+		if ( *after_parsing_ptr == cts_parser::US )
+		{
+			diff += 1; // cts_parser::US
+			parsing_ptr = after_parsing_ptr + 1; // cts_parser::US
+		}
+		else
+			parsing_ptr = after_parsing_ptr;
 		size -= diff;
-		parsing_ptr = after_parsing_ptr;
 	}
 }
 
