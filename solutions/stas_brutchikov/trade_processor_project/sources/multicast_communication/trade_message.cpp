@@ -2,25 +2,29 @@
 #include <iomanip>
 #include <string>
 
-std::string multicast_communication::trade_message::security_symbol() const
+namespace multicast_communication {
+
+std::string trade_message::security_symbol() const
 {
-	return "";
+	return security_symbol_;
 }
 
-double multicast_communication::trade_message::price() const
+double trade_message::price() const
 {
-	return 0.0;
+	return price_;
 }
 
-double multicast_communication::trade_message::volume() const
+double trade_message::volume() const
 {
-	return 0.0;
+	return volume_;
 }
 
-std::ostream& multicast_communication::operator << ( std::ostream& out, const trade_message_ptr& msg )
+std::ostream& operator << ( std::ostream& out, const trade_message_ptr& msg )
 {
       return out << std::fixed << "T " << msg->security_symbol() 
                                << " " << std::setprecision( 2 ) << msg->price() 
                                << " " << std::setprecision( 1 ) << msg->volume() 
                                << std::endl;
 }
+
+} //multicast_communication
