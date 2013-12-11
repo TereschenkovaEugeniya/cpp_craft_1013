@@ -114,8 +114,8 @@ void minute_calculator::minute_calculator_accumulator::calculate_quote()
 			}
 
 			std::string key = msg->security_symbol();
-			double bid = msg->bid_price();
-			double ask = msg->offer_price();
+			double bid = msg->bid_volume();
+			double ask = msg->offer_volume();
 		
 			boost::trim(key);
 			{
