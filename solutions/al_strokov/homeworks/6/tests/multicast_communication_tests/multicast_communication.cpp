@@ -52,8 +52,6 @@ void task6::tests_::binReader_tests(){
 		br.readShortQuote(sq);
 		BOOST_CHECK_EQUAL(br.fileOk, true);
 		BOOST_CHECK_EQUAL(renderArrStr(sq.securitySymbol, 3), "ADM");
-		std::cout << sq.bidPriceDenominatorIndicator << std::endl;
-		std::cout << renderArrStr(sq.bidShortPrice, 8) << std::endl;
 	}
 }
 
