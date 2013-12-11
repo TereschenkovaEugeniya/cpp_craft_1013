@@ -30,12 +30,7 @@ class minute_market_data
 
 	static void button_handler( int )
 	{
-		if( calc.get() != NULL )
-			calc->stop();
-		if( com.get() != NULL )
-			com->stop();
-		else 
-			exit( 0 );
+		exit( 0 );
 	}
 
 	void print_datafeed( const minute_calculator::minute_datafeed_ptr& data )

@@ -48,10 +48,10 @@ namespace minute_calculator
 	public:
 
 		explicit datafeed_calculator( datafeed_callback_type handler );
+		virtual ~datafeed_calculator();
 
 		void new_trade( const multicast_communication::trade_message_ptr& );
 		void new_quote( const multicast_communication::quote_message_ptr& );
-		void stop();
 	};
 
 }

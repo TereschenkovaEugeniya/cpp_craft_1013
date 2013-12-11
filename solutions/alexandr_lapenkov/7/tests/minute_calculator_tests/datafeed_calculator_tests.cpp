@@ -53,8 +53,6 @@ void minute_calculator::tests_::datafeed_calculator_tests()
 		binreader reader( stream );
 
 		BOOST_CHECK_NO_THROW( msg->parse( reader, message[1], message[2] ) );
-
-		BOOST_CHECK_NO_THROW( calc.stop() );
 	}
 
 
@@ -84,7 +82,7 @@ void minute_calculator::tests_::datafeed_calculator_tests()
 		std::ifstream in( SOURCE_DIR"/tests/data/233.200.79.0.udp" );
 		boost::asio::ip::udp::endpoint endpoint( boost::asio::ip::address::from_string( "224.0.0.0" ), 49000 ); 
 		boost::asio::ip::udp::socket socket( io, endpoint.protocol() );
-
+		
 		BOOST_CHECK_NO_THROW
 			(
 				for( size_t i = 0; i < 500; ++i )
@@ -100,14 +98,8 @@ void minute_calculator::tests_::datafeed_calculator_tests()
 				}
 				boost::this_thread::sleep_for( boost::chrono::milliseconds( 150 ) );
 			);
-
-		BOOST_CHECK_NO_THROW( receiver.stop() );
-
-		BOOST_CHECK_NO_THROW( calc.stop() );
-
-		for( std::set< std::string >::iterator it = delete_filenames.begin(); it != delete_filenames.end(); ++it )
-			boost::filesystem::remove( *it );
 	}
-
-
+	
+	for( std::set< std::string >::iterator it = delete_filenames.begin(); it != delete_filenames.end(); ++it )
+		boost::filesystem::remove( *it );
 }

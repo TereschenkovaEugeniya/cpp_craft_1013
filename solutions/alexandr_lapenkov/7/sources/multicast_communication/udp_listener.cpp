@@ -19,9 +19,11 @@ namespace multicast_communication
 		socket_reload_();
 		register_listen_();
 	}
+
 	async_udp::udp_listener::~udp_listener()
 	{
 	}
+
 	void async_udp::udp_listener::socket_reload_()
 	{
 		using boost::asio::ip::udp;

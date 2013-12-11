@@ -4,6 +4,14 @@ minute_calculator::datafeed_calculator::datafeed_calculator( datafeed_callback_t
 	: datafeed_handler( handler )
 {}
 
+minute_calculator::datafeed_calculator::~datafeed_calculator()
+{
+	std::pair< std::string, minute_datafeed_ptr > var;
+	BOOST_FOREACH( var, data )
+		datafeed_handler( var.second );
+}
+
+
 void minute_calculator::datafeed_calculator::new_trade( const multicast_communication::trade_message_ptr& msg )
 {
 	std::string stock_name = msg->get_security_symbol();
@@ -66,11 +74,4 @@ void minute_calculator::datafeed_calculator::new_quote( const multicast_communic
 		current_data->ask = msg->get_offer_volume();
 		current_data->bid = msg->get_bid_volume();
 	}
-}
-
-void minute_calculator::datafeed_calculator::stop()
-{
-	std::pair< std::string, minute_datafeed_ptr > var;
-	BOOST_FOREACH( var, data )
-		datafeed_handler( var.second );
 }

@@ -59,7 +59,6 @@ namespace multicast_communication
 		void new_message( const std::string&, message_type );
 		void process_trade();
 		void process_quote();
-		void stop();
 
 	};
 }

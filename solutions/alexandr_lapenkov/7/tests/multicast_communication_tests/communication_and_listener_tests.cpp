@@ -28,16 +28,6 @@ namespace multicast_communication
 
 			return res;
 		}
-
-		void trade_message_callback_( const trade_message_ptr& msg )
-		{
-
-		}
-		
-		void quote_message_callback_( const quote_message_ptr& msg )
-		{
-
-		}
 	}
 }
 
@@ -71,7 +61,6 @@ void multicast_communication::tests_::communication_and_listener_tests()
 				message = "abc";
 				receiver.processor->parse( message, QUOTE );
 			);
-		receiver.stop();
 	}
 	
 	BOOST_CHECK_EQUAL( calculate_lines(), 1000 );

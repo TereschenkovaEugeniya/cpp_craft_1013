@@ -19,7 +19,21 @@ multicast_communication::communication::communication
 		{}
 
 multicast_communication::communication::~communication()
-{}
+{
+	std::pair< service_ptr, async_udp::udp_listener_ptr > var;
+	BOOST_FOREACH( var, connections )
+	{
+		var.first->stop();
+	}
+	{
+		boost::mutex::scoped_lock lock( interrupt_protector );
+		interrupt = true;
+	}
+	trade_queue.interrupt();
+	quote_queue.interrupt();
+	trade_threads.join_all();
+	quote_threads.join_all();
+}
 
 void multicast_communication::communication::start()
 {
@@ -48,23 +62,6 @@ void multicast_communication::communication::start()
 void multicast_communication::communication::new_connection( service_ptr io )
 {
 	io->run();
-}
-
-void multicast_communication::communication::stop()
-{
-	std::pair< service_ptr, async_udp::udp_listener_ptr > var;
-	BOOST_FOREACH( var, connections )
-	{
-		var.first->stop();
-	}
-	{
-		boost::mutex::scoped_lock lock( interrupt_protector );
-		interrupt = true;
-	}
-	trade_queue.interrupt();
-	quote_queue.interrupt();
-	trade_threads.join_all();
-	quote_threads.join_all();
 }
 
 void multicast_communication::communication::new_message( const std::string& msg, message_type mt )

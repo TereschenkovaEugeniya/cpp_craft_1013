@@ -47,9 +47,13 @@ namespace multicast_communication
 	template< typename T >
 	thread_safe_queue< T >::~thread_safe_queue()
 	{
-		T a;
-		while( !empty() )
-			pop(a);
+		boost::mutex::scoped_lock lock( push_pop_protector );
+		for( element* a = rear; a != NULL; )
+		{
+			element *next = a->next;
+			delete a;
+			a = next;
+		}
 	}
 
 	template< typename T >

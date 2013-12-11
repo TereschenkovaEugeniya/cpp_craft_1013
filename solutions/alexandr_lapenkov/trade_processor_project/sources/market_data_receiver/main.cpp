@@ -30,10 +30,7 @@ namespace multicast_communication
 
 		static void button_handler( int )
 		{
-			if( c.get() != NULL )
-				c->stop();
-			else
-				exit( 0 );
+			exit( 0 );
 		}
 
 	public:
