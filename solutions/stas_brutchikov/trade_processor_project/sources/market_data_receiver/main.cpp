@@ -7,6 +7,7 @@
 #include "market_data_reciever.h"
 #include "dummy_processor.h"
 
+#include "config.h"
 
 
 boost::mutex exit_mutex;
@@ -16,7 +17,7 @@ using namespace multicast_communication;
 
 void sigint_handler( int )
 {
-    exit_ctrl_c.notify_all();
+    exit_ctrl_c.notify_one();
 }
 
 
@@ -28,11 +29,10 @@ int main()
     signal(SIGINT, sigint_handler);  
 	
     dummy_processor processor(std::cout);
-    market_data_receiver receiver(processor);
+    config conf (config_name);
+    market_data_receiver receiver(conf.trade_thread_size(), conf.quote_thread_size(), conf.trade_ports(), conf.quote_ports(), processor);
+   
+    boost::mutex::scoped_lock lock( exit_mutex ); 
+    exit_ctrl_c.wait( lock );
 
-    receiver.run();
-
-    exit_ctrl_c.wait( boost::mutex::scoped_lock( exit_mutex ) );
-
-    receiver.stop();
 }
