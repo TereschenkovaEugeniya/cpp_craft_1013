@@ -1,7 +1,7 @@
 #include "minute_calculator_accumulator.h"
 #include <boost/algorithm/string.hpp>
 
-minute_calculator::minute_calculator_accumulator::minute_calculator_accumulator():current_minute_(0)
+minute_calculator::minute_calculator_accumulator::minute_calculator_accumulator(callback_type callback):current_minute_(0),callback_(callback)
 {
 
 }
@@ -49,6 +49,7 @@ void minute_calculator::minute_calculator_accumulator::minute_msg()
 		transfer_data_ptr.reset( new container_minute_data(calculate_data_.begin(), calculate_data_.end()));
 		calculate_data_.clear();
 	}
+	callback_(transfer_data_ptr);
 }
 
 void minute_calculator::minute_calculator_accumulator::calculate_trade()

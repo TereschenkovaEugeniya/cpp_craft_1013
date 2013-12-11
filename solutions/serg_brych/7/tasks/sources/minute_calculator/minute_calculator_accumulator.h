@@ -35,6 +35,9 @@ namespace minute_calculator
 	typedef system_utilities::common::ts_queue< multicast_communication::trade_message > trade_queue;
 
 	typedef std::map<std::string, minute_data> container_minute_data;
+	typedef boost::shared_ptr<container_minute_data> container_minute_data_ptr;
+	typedef std::function< void ( minute_calculator::container_minute_data_ptr ) > callback_type;
+
 
  	class minute_calculator_accumulator
 	{
@@ -44,12 +47,12 @@ namespace minute_calculator
 
 		boost::thread_group process_threads_;
 		uint32_t current_minute_;
-		
+		callback_type callback_;
 		container_minute_data calculate_data_;
 	public:
 		void run();
 		void stop();
-		minute_calculator_accumulator();
+		minute_calculator_accumulator(callback_type callback);
 		~minute_calculator_accumulator();
 		bool push_trade(const multicast_communication::trade_message_ptr&);
 		bool push_quote(const multicast_communication::quote_message_ptr&);
