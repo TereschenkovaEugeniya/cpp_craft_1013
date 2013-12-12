@@ -31,7 +31,10 @@ multicast_communication::quote_message::quote_message( const cqs_protocol::messa
 	offer_price_ = get_offer_price( lq );
 	offer_volume_ = get_offer_volume( lq );
 }
-
+boost::uint32_t multicast_communication::quote_message::minute() const
+{
+	return minute_;
+}
 const std::string& multicast_communication::quote_message::security_symbol() const
 {
 	return security_symbol_;
@@ -56,7 +59,26 @@ double multicast_communication::quote_message::offer_volume() const
 {
 	return offer_volume_;
 }
+//
+multicast_communication::quote_message_ptr multicast_communication::quote_message::create_test_message( 
+	const boost::uint32_t minute, 
+	const std::string security_symbol, 
+	double bid_price, 
+	double bid_volume, 
+	double offer_price,
+	double offer_volume )
+{
+	quote_message_ptr result( new quote_message() );
+	result->minute_ = minute;
+	result->security_symbol_ = security_symbol;
+	result->bid_price_ = bid_price;
+	result->bid_volume_ = bid_volume;
+	result->offer_price_ = offer_price;
+	result->offer_volume_ = offer_volume;
+	return result;
+}
 
+//
 std::ostream& multicast_communication::operator<<( std::ostream& out, const multicast_communication::quote_message& quote )
 {
 	out << "Q " << quote.security_symbol().c_str() << " " 

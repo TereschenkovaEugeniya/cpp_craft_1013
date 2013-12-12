@@ -13,11 +13,3 @@ void multicast_communication::tests_::market_data_receiver_manager_test_helper::
 	boost::mutex::scoped_lock lock( cqs_message_sizes_protector_ );
 	cqs_message_sizes_.push_back( size );
 }
-
-//
-void multicast_communication::tests_::market_data_processor_test_helper::new_trade( const trade_message_ptr& )
-{
-}
-void multicast_communication::tests_::market_data_processor_test_helper::new_quote( const quote_message_ptr& )
-{
-}

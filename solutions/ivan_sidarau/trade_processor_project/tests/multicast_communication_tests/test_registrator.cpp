@@ -16,7 +16,6 @@
 	master_test_suite.add( BOOST_TEST_CASE( &quote_message_tests ) );
 	master_test_suite.add( BOOST_TEST_CASE( &trade_message_tests ) );
 
-	master_test_suite.add( BOOST_TEST_CASE( &market_data_processor_tests ) );
 	master_test_suite.add( BOOST_TEST_CASE( &market_data_receiver_tests ) );
 
 	master_test_suite.add( BOOST_TEST_CASE( &cts_protocol_tests ) );

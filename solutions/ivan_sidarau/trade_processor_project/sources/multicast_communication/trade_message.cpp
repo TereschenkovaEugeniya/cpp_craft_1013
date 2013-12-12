@@ -26,6 +26,10 @@ multicast_communication::trade_message::trade_message( const cts_protocol::messa
 	volume_ = get_volume( lt );
 }
 //
+boost::uint32_t multicast_communication::trade_message::minute() const
+{
+	return minute_;
+}
 const std::string& multicast_communication::trade_message::security_symbol() const
 {
 	return security_symbol_;
@@ -40,7 +44,17 @@ double multicast_communication::trade_message::volume() const
 {
 	return volume_;
 }
-
+//
+multicast_communication::trade_message_ptr multicast_communication::trade_message::create_test_message( const boost::uint32_t minute, const std::string security_symbol, double price, double volume )
+{
+	trade_message_ptr result( new trade_message() );
+	result->minute_ = minute;
+	result->security_symbol_ = security_symbol;
+	result->price_ = price;
+	result->volume_ = volume;
+	return result;
+}
+//
 std::ostream& multicast_communication::operator<<( std::ostream& out, const multicast_communication::trade_message& trade )
 {
 	out << "T " << trade.security_symbol().c_str() << " " << trade.price() << " " << trade.volume();

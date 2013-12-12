@@ -4,13 +4,20 @@
 #include <ostream>
 
 #include <boost/shared_ptr.hpp>
+#include <boost/cstdint.hpp>
 
 #include <cts_protocol.h>
 
 namespace multicast_communication
 {
+	class trade_message;
+
+	typedef boost::shared_ptr< trade_message > trade_message_ptr;
+
 	class trade_message
 	{
+		boost::uint32_t minute_;
+
 		std::string security_symbol_;
 		double price_;
 		double volume_;
@@ -19,12 +26,14 @@ namespace multicast_communication
 		explicit trade_message( const cts_protocol::message_header&, const cts_protocol::short_trade& );
 		explicit trade_message( const cts_protocol::message_header&, const cts_protocol::long_trade& );
 
+		boost::uint32_t minute() const;
 		const std::string& security_symbol() const;
 		double price() const;
 		double volume() const;
+
+		static trade_message_ptr create_test_message( const boost::uint32_t minute, const std::string security_symbol, double price, double volume );
 	};
 
-	typedef boost::shared_ptr< trade_message > trade_message_ptr;
 
 	std::ostream& operator<<( std::ostream&, const trade_message& );
 }
