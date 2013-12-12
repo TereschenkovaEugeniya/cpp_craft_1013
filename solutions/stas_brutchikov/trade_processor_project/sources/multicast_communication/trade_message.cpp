@@ -4,22 +4,22 @@
 
 namespace multicast_communication {
 
-std::string multicast_communication::trade_message::security_symbol() const
+std::string trade_message::security_symbol() const
 {
 	return security_symbol_;
 }
 
-double multicast_communication::trade_message::price() const
+double trade_message::price() const
 {
 	return price_;
 }
 
-double multicast_communication::trade_message::volume() const
+double trade_message::volume() const
 {
 	return volume_;
 }
 
-std::ostream& multicast_communication::operator << ( std::ostream& out, const trade_message_ptr& msg )
+std::ostream& operator << ( std::ostream& out, const trade_message_ptr& msg )
 {
       return out << std::fixed << "T " << msg->security_symbol() 
                                << " " << std::setprecision( 2 ) << msg->price() 
@@ -28,7 +28,7 @@ std::ostream& multicast_communication::operator << ( std::ostream& out, const tr
 }
 
 template<>
-bool multicast_communication::parse<multicast_communication::trades_messages_ptr>(const std::string& data, trades_messages_ptr& obj)
+bool parse<multicast_communication::trades_messages_ptr>(const std::string& data, trades_messages_ptr& obj)
 {
     return true;
 }

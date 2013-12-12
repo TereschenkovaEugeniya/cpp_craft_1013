@@ -17,7 +17,7 @@ void read_map(std::istream& in, MapContainer& container)
 multicast_communication::config::config(const std::string& file_name)
     : trade_thread_size_(0), quote_thread_size_(0)
 {
-	std::ifstream conf(file_name);
+    std::ifstream conf(file_name);
     if(!conf.is_open())
     {
         return;
@@ -25,6 +25,6 @@ multicast_communication::config::config(const std::string& file_name)
 
     conf >> trade_thread_size_ >> quote_thread_size_;
 	
-	read_map( conf, trade_ports_);
+    read_map( conf, trade_ports_);
     read_map( conf, quote_ports_);
 }
