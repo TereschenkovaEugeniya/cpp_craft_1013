@@ -19,6 +19,7 @@ void minute_calculator::minute_calculator_accumulator::run()
 
 void minute_calculator::minute_calculator_accumulator::stop()
 {
+	minute_msg();
 	trade_queue_.stop();
 	quote_queue_.stop();
 	
@@ -80,7 +81,7 @@ void minute_calculator::minute_calculator_accumulator::calculate_trade()
 					calculate_data_[key].open_price = msg_price;
 					calculate_data_[key].low_price = msg_price;
 					calculate_data_[key].stock_name = key;
-					calculate_data_[key].minute_ = new_time;
+					calculate_data_[key].minute = new_time;
 				}
 			}
 
@@ -123,7 +124,7 @@ void minute_calculator::minute_calculator_accumulator::calculate_quote()
 				if( calculate_data_.find(key) == calculate_data_.end())
 				{
 					calculate_data_[key].stock_name = key;
-					calculate_data_[key].minute_ = new_time;
+					calculate_data_[key].minute = new_time;
 				}
 			}
 
@@ -131,4 +132,23 @@ void minute_calculator::minute_calculator_accumulator::calculate_quote()
 			calculate_data_[key].ask += ask;
 		}
 	}
+}
+
+
+std::ostream& minute_calculator::operator<<(std::ostream& out, const minute_data& data)
+{
+	char buffer[16] = {0};
+	strcpy(&buffer[0], data.stock_name.c_str());
+
+    out.write( reinterpret_cast< const char* >( &data.minute ), sizeof( data.minute) );
+	out.write( const_cast< const char* >( &buffer[0] ), sizeof(buffer));
+    out.write(reinterpret_cast< const char* >(&data.open_price), sizeof(data.open_price));
+    out.write(reinterpret_cast< const char* >(&data.high_price), sizeof(data.high_price));
+    out.write(reinterpret_cast< const char* >(&data.low_price), sizeof(data.low_price));
+    out.write(reinterpret_cast< const char* >(&data.close_price), sizeof(data.close_price));
+    out.write(reinterpret_cast< const char* >(&data.volume), sizeof(data.volume));
+    out.write(reinterpret_cast< const char* >(&data.bid), sizeof(data.bid));
+    out.write(reinterpret_cast< const char* >(&data.ask), sizeof(data.ask));
+    return out;
+
 }

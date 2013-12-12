@@ -14,11 +14,11 @@ namespace minute_calculator
 {
 	struct minute_data
 	{
-		minute_data():minute_(0),stock_name(""), open_price(0.0), high_price(0.0),low_price(0.0),close_price(0.0), volume(0.0), bid(0.0), ask(0.0)
+		minute_data():minute(0),stock_name(""), open_price(0.0), high_price(0.0),low_price(0.0),close_price(0.0), volume(0.0), bid(0.0), ask(0.0)
 		{
 		
 		}
-		uint32_t minute_;
+		uint32_t minute;
 
 		std::string stock_name;
 		double open_price;
@@ -31,6 +31,7 @@ namespace minute_calculator
 		double ask; // quote.offer_price()
 	};
 	
+	std::ostream& operator<<(std::ostream&, const minute_data&);
 	typedef system_utilities::common::ts_queue< multicast_communication::quote_message > quote_queue;
 	typedef system_utilities::common::ts_queue< multicast_communication::trade_message > trade_queue;
 

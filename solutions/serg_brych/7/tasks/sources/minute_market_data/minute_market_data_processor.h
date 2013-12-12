@@ -2,12 +2,14 @@
 #define _MINUTE_MARKET_DATA_PROCESSOR_H_
 
 #include <iostream>
+#include <boost/scoped_ptr.hpp>
 #include <boost/thread.hpp>
+#include <map>
+#include <fstream>
 
 #include "minute_calculator_accumulator.h"
 #include "market_data_processor.h"
 #include "market_data_receiver.h"
-
 
 static const std::string config_file_path = BINARY_DIR "/config.ini";
 
@@ -24,15 +26,14 @@ namespace minute_market_data
 		market_data_receiver_ptr receive_;
 		minute_calculator_accumulator_ptr calculator_;
 		std::list<minute_calculator::container_minute_data_ptr> output_;
-	private:
+		std::map<std::string, std::ofstream> out_;
 		virtual void new_trade( const multicast_communication::trade_message_ptr& );
 		virtual void new_quote( const multicast_communication::quote_message_ptr& );
 		void disk_writer();
 		bool stop_;
-		boost::thread write_thread_;
+		boost::scoped_ptr<boost::thread> write_thread_ptr_;
 	public:
 		
-		void minute_msg(minute_calculator::container_minute_data_ptr );
 		void run();
 		void stop();
 		explicit minute_market_data_processor();
