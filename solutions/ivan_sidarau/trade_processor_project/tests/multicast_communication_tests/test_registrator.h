@@ -15,5 +15,7 @@ namespace multicast_communication
 
 		void cqs_protocol_tests();
 		void cqs_parser_tests();
+
+		void market_datafeed_writer_tests();
 	}
 }

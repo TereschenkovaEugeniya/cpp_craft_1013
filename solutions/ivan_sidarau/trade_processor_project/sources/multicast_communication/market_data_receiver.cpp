@@ -99,24 +99,25 @@ void multicast_communication::market_data_receiver::quote_thread_method_()
 //
 void multicast_communication::market_data_receiver::on_new_cts_message_( socket_ptr socket, common::buffer_ptr received_buffer, const boost::system::error_code& error, const size_t bytes_received )
 {
-	if ( error )
-	{
-	}
-	else
+	if ( !error )
 	{
 		manager_.cts_line_message( received_buffer, bytes_received );
+		return_buffer_( received_buffer );
 		register_listen_( socket, &market_data_receiver::on_new_cts_message_ );
 	}
 }
 void multicast_communication::market_data_receiver::on_new_cqs_message_( socket_ptr socket, common::buffer_ptr received_buffer, const boost::system::error_code& error, const size_t bytes_received )
 {
-	if ( error )
-	{
-	}
-	else
+	if ( !error )
 	{
 		manager_.cqs_line_message( received_buffer, bytes_received );
+		return_buffer_( received_buffer );
 		register_listen_( socket, &market_data_receiver::on_new_cqs_message_ );
 	}
-
+}
+//
+void multicast_communication::market_data_receiver::return_buffer_( common::buffer_ptr processed_buffer )
+{
+	boost::mutex::scoped_lock lock( buffers_protector_ );
+	free_buffers_.push( processed_buffer );
 }

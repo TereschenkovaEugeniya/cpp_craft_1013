@@ -40,3 +40,9 @@ double multicast_communication::trade_message::volume() const
 {
 	return volume_;
 }
+
+std::ostream& multicast_communication::operator<<( std::ostream& out, const multicast_communication::trade_message& trade )
+{
+	out << "T " << trade.security_symbol().c_str() << " " << trade.price() << " " << trade.volume();
+	return out;
+}

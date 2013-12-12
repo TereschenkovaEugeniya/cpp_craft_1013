@@ -56,3 +56,11 @@ double multicast_communication::quote_message::offer_volume() const
 {
 	return offer_volume_;
 }
+
+std::ostream& multicast_communication::operator<<( std::ostream& out, const multicast_communication::quote_message& quote )
+{
+	out << "Q " << quote.security_symbol().c_str() << " " 
+		<< quote.bid_price() << " " << quote.bid_volume() << " "
+		<< quote.offer_price() << " " << quote.offer_volume();
+	return out;
+}

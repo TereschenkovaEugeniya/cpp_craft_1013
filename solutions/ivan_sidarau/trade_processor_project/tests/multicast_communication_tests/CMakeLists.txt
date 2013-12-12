@@ -8,6 +8,15 @@ find_package( Boost ${SEARCH_PARAMETERS} COMPONENTS
 	chrono
 )
 
-compile_project( ${tests_name} "*.cpp" "*.h" BINARY tests ${module_name} common Boost )
+find_package( system_utilities ${SEARCH_PARAMETERS} COMPONENTS
+	ts_queue
+	logger
+	file_logger
+	queue_logger
+	task_processor
+)
+
+
+compile_project( ${tests_name} "*.cpp" "*.h" BINARY tests ${module_name} common system_utilities Boost )
 register_test( ${tests_name} 5 4 )
 

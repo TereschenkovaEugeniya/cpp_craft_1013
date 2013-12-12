@@ -1,6 +1,8 @@
 #ifndef _MULTICAST_COMMUNICATION_TRADE_MESSAGE_H_
 #define _MULTICAST_COMMUNICATION_TRADE_MESSAGE_H_
 
+#include <ostream>
+
 #include <boost/shared_ptr.hpp>
 
 #include <cts_protocol.h>
@@ -23,6 +25,8 @@ namespace multicast_communication
 	};
 
 	typedef boost::shared_ptr< trade_message > trade_message_ptr;
+
+	std::ostream& operator<<( std::ostream&, const trade_message& );
 }
 
 #endif // _MULTICAST_COMMUNICATION_TRADE_MESSAGE_H_

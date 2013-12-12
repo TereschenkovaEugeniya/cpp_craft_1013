@@ -23,7 +23,12 @@ namespace multicast_communication
 		explicit market_data_receiver_manager(){}
 		virtual ~market_data_receiver_manager(){}
 	private:
+		// you can't store this buffer somewhere and process after
+		// you could copy buffer here, but it could be changed right after living this method
 		virtual void cts_line_message( const common::buffer_ptr ptr, const size_t size ) = 0;
+
+		// you can't store this buffer somewhere and process after
+		// you could copy buffer here, but it could be changed right after living this method
 		virtual void cqs_line_message( const common::buffer_ptr ptr, const size_t size ) = 0;
 	};
 	class market_data_receiver : virtual protected boost::noncopyable
@@ -72,6 +77,8 @@ namespace multicast_communication
 		//
 		void on_new_cts_message_( socket_ptr socket, common::buffer_ptr received_buffer, const boost::system::error_code& error, const size_t bytes_received );
 		void on_new_cqs_message_( socket_ptr socket, common::buffer_ptr received_buffer, const boost::system::error_code& error, const size_t bytes_received );
+		//
+		void return_buffer_( common::buffer_ptr processed_buffer );
 	};
 }
 
