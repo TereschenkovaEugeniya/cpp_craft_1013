@@ -12,6 +12,17 @@ namespace async_udp
 {
 	class udp_listener : virtual private boost::noncopyable
 	{
+	public:
+        typedef boost::function< void ( const std::string& ) > sink_type;
+
+		explicit udp_listener( boost::asio::io_service& io_service, const std::string& multicast_address, unsigned short port , sink_type sink );
+		~udp_listener();
+	private:
+        typedef boost::shared_ptr< std::string > buffer_type;
+		void socket_reload_();
+		void register_listen_(buffer_type lo_buffer = buffer_type());
+		void listen_handler_(buffer_type lo_buffer, const boost::system::error_code& error, const size_t bytes_received );
+
 		static const size_t default_buffer_size;
 
 		boost::asio::io_service& io_service_;
@@ -21,17 +32,9 @@ namespace async_udp
 
 		std::string multicast_address_;
 
-		typedef boost::shared_ptr< std::string > buffer_type;
-        typedef std::function< void ( std::string& ) > sink_type;
-		sink_type sink_;
 
-	public:
-		explicit udp_listener( boost::asio::io_service& io_service, const std::string& multicast_address, unsigned short port , sink_type sink );
-		~udp_listener();
-	private:
-		void socket_reload_();
-		void register_listen_(buffer_type lo_buffer = buffer_type());
-		void listen_handler_(buffer_type lo_buffer, const boost::system::error_code& error, const size_t bytes_received );
+        
+		sink_type sink_;
 	};
 }
 

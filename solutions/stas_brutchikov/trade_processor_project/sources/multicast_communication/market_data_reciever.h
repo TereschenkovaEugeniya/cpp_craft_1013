@@ -14,6 +14,9 @@
 
 #include <vector>
 
+#include <trade_message.h>
+#include <quote_message.h>
+
 namespace multicast_communication
 {
     class market_data_receiver : public boost::noncopyable
@@ -23,14 +26,79 @@ namespace multicast_communication
         
         typedef std::shared_ptr< boost::asio::io_service > io_ptr;
 		typedef std::shared_ptr< async_udp::udp_listener > udp_listner_ptr;
-		
-        typedef std::vector< io_ptr > vector_service_ptr;
-        typedef std::vector< udp_listner_ptr > vector_udp_listner_ptr;
-        vector_service_ptr io_trades_;
-		vector_service_ptr io_quotes_;
-		vector_udp_listner_ptr udp_listners_trades;
-		vector_udp_listner_ptr udp_listners_quotes;
 
+
+        typedef std::vector< io_ptr > vector_io_ptr;
+        typedef std::vector< udp_listner_ptr > vector_udp_listner_ptr;
+
+        struct market_group
+        {
+            vector_io_ptr  io_group;
+            boost::thread_group	threads;
+            vector_udp_listner_ptr udp_listners_group;
+        };
+		
+
+        market_group    trade_group;
+        market_group    quote_group;
+
+            
+        template<typename container_message_ptr, typename message_ptr>
+        void initialize_market_group( market_group& group, const size_t thread_size,  const vector_adres_port& ports,
+            boost::function< void ( const message_ptr& ) > mess_processor)
+        {
+            group.io_group.resize(thread_size);
+            for( vector_io_ptr::iterator iter = group.io_group.begin(); iter != group.io_group.end(); ++iter )
+	        {
+                iter->reset(new boost::asio::io_service());
+	        }
+
+            group.udp_listners_group.resize(ports.size());
+            
+            for( auto iter = 0; iter != ports.size(); ++iter )
+	        {
+                group.udp_listners_group[ iter ].reset ( new async_udp::udp_listener(  (*group.io_group[ iter % thread_size ]), 
+                    ports[iter].first, ports[iter].second,			
+                            [&](const std::string& data)
+		                    {
+			                    container_message_ptr messages;
+			                    if(! parse(data,  messages) )
+			                    {
+                                    return; 
+                                }
+
+				                std::for_each(messages.begin(), messages.end(),
+                                    [&](const message_ptr& msg)
+					                {
+                                        mess_processor(msg);
+					                }
+				                    );
+		                    }));
+            }
+
+
+		    for( size_t i = 0; i < thread_size; i++ )
+		    {
+                group.threads.create_thread(
+				    boost::bind( &multicast_communication::market_data_receiver::activate_reciev, this, group.io_group[i % group.io_group.size()]));
+		    }
+    
+
+        }
+        void uninitialize_market_group( market_group& group )
+        {
+            for( vector_io_ptr::iterator iter = group.io_group.begin(); iter != group.io_group.end(); ++iter )
+            {
+		        ( *iter )->stop();	
+            }
+	            
+            group.threads.join_all();
+        }
+
+        void activate_reciev ( io_ptr service )
+        {
+            service->run();
+        }
 
 
     public:
@@ -39,55 +107,18 @@ namespace multicast_communication
                                        const vector_adres_port& trade_ports,
                                        const vector_adres_port& quote_ports,
                                        market_data_processor& processor )
-            :processor_(processor)
+            :processor_( processor )
         {
-            // init trades
-	        io_trades_.resize(trade_thread_size);
 
-            for(vector_service_ptr::iterator iter = io_trades_.begin(); iter != io_trades_.end(); ++iter)
-	        {
-                iter->reset(new boost::asio::io_service());
-	        }
-
-            udp_listners_trades.resize(trade_ports.size());
-            for(auto iter = 0; iter != trade_ports.size(); ++iter)
-	        {
-                udp_listners_trades[ iter ].reset ( new async_udp::udp_listener( ( io_trades_[ iter % trade_thread_size ], 
-                    trade_ports[iter].first, trade_ports[iter].second,			
-                            [&](const std::string& data)
-		                    {
-			                    quote_messages_ptr messages;
-			                    if( parse(data,  messages) )
-			                    {
-				                    std::for_each(messages.begin(), messages.end(),
-                                        [&](quote_messages_ptr &msg)
-					                    {
-						                    processor_.new_quote(msg);
-					                    }
-				                    );
-			                    }
-		                    } );
-	        }
-
-            
-
-
-            // ini quotes
-            io_quotes_.resize(trade_thread_size);
-	        for(auto i = io_quotes_.begin(); i != io_quotes_.end(); i++)
-	        {
-		        i->reset(new boost::asio::io_service());
-	        }
-
-
-
+            initialize_market_group<trades_messages_ptr, trade_message_ptr>(trade_group, trade_thread_size, trade_ports, boost::bind( &market_data_processor::new_trade, &processor_, _1));
+            initialize_market_group<quote_messages_ptr, quote_message_ptr>(quote_group, quote_thread_size, quote_ports, boost::bind( &market_data_processor::new_quote, &processor_, _1));     
         }
         ~market_data_receiver()
         {
             try
             {
-
-
+                uninitialize_market_group( trade_group );
+                uninitialize_market_group( quote_group );
 
             }
             catch(...)

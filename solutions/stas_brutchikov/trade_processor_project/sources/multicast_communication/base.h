@@ -1,4 +1,7 @@
 #pragma once
+#include <vector>
+#include <string>
+
 namespace multicast_communication
 {
 
@@ -10,6 +13,6 @@ typedef std::pair < std::string, unsigned short > address_port;
 typedef std::vector < address_port > vector_adres_port;
 
 template<typename T>
-bool parse(const string& data, T& obj);
+bool parse(const std::string& data, T& obj);
 
 } //namespace multicast_communication

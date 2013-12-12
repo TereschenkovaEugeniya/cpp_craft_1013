@@ -1,9 +1,11 @@
 #ifndef _MULTICAST_COMMUNICATION_QUOTE_MESSAGE_H_
 #define _MULTICAST_COMMUNICATION_QUOTE_MESSAGE_H_
 
-#include <list>
+
+#include <vector>
 #include <boost/shared_ptr.hpp>
 
+#include "base.h"
 namespace multicast_communication
 {
 
@@ -21,15 +23,10 @@ namespace multicast_communication
 	typedef boost::shared_ptr< quote_message > quote_message_ptr;
 
 
-    typedef std::list< quote_message_ptr > quote_messages_ptr;
+    typedef std::vector< quote_message_ptr > quote_messages_ptr;
 
     std::ostream& operator << ( std::ostream& out, const quote_message_ptr& msg );
 
-    template<>
-    bool parse<quote_messages_ptr>(const string& data, quote_messages_ptr& obj)
-    {
-        return true;
-    }
 }
 
 #endif // _MULTICAST_COMMUNICATION_QUOTE_MESSAGE_H_

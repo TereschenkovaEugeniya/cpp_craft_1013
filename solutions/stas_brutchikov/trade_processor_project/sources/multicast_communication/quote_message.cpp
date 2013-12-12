@@ -37,3 +37,9 @@ std::ostream& multicast_communication::operator << ( std::ostream& out, const qu
                              << " " << std::setprecision( 1 ) << msg->offer_volume() 
                              << std::endl;    
 }
+
+template<>
+bool multicast_communication::parse<multicast_communication::quote_messages_ptr>(const std::string& data, quote_messages_ptr& obj)
+{
+    return true;
+}
