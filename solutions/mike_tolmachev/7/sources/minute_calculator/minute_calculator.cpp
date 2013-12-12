@@ -29,22 +29,28 @@ namespace minute_calculator
 		std::memset(&minute, 0, sizeof(minute));
 		std::string security_symbol = msg->security_symbol();
 
-		if (minutes_.find(security_symbol) == minutes_.end() || !minute.init_by_trade)
+		if (minutes_.find(security_symbol) != minutes_.end())
 		{
-			new_minute(minute, msg);
+			minute = minutes_[security_symbol];			
 		}
 		else
 		{
-			minute = minutes_[security_symbol];
-		}
+			new_minute(minute, msg);
+		}		
 
-		if (msg->time >= (minute.minute + 60))
+		if (msg->time() >= (minute.minute + 60))
 		{
 			//callback
 			processor_.new_minute(minute);
 
 			std::memset(&minute, 0, sizeof(minute));
 			new_minute(minute, msg);
+		}
+
+		if (!minute.init_by_trade)
+		{
+			minute.open_prise = msg->price();
+			minute.low_price = msg->price();
 		}
 
 		if (minute.high_prise < msg->price())
@@ -78,7 +84,7 @@ namespace minute_calculator
 			new_minute(minute, msg);
 		}
 
-		if (msg->time >= (minute.minute + 60))
+		if (msg->time() >= (minute.minute + 60))
 		{
 			//callback
 			processor_.new_minute(minute);
@@ -87,17 +93,17 @@ namespace minute_calculator
 			new_minute(minute, msg);
 		}
 
-		minute.bid += msg->bid_price();
-		minute.ask += msg->offer_price();
+		minute.bid += msg->bid_volume();
+		minute.ask += msg->offer_volume();
 
 		minutes_[security_symbol] = minute;
 	}
 
-	void new_minute(minute_data& minute, const multicast_communication::trade_message_ptr& msg)
+	void minute_calculator::new_minute(minute_data& minute, const multicast_communication::trade_message_ptr& msg)
 	{
 		std::string security_symbol = msg->security_symbol();
 
-		minute.minute = msg->time;
+		minute.minute = msg->time();
 		std::memcpy(minute.stock_name, security_symbol.c_str(), security_symbol.length());
 		minute.open_prise = msg->price();
 		minute.low_price = msg->price();
@@ -105,11 +111,11 @@ namespace minute_calculator
 		minute.init_by_trade = true;
 	}
 
-	void new_minute(minute_data& minute, const multicast_communication::quote_message_ptr& msg)
+	void minute_calculator::new_minute(minute_data& minute, const multicast_communication::quote_message_ptr& msg)
 	{
 		std::string security_symbol = msg->security_symbol();
 
-		minute.minute = msg->time;
+		minute.minute = msg->time();
 		std::memcpy(minute.stock_name, security_symbol.c_str(), security_symbol.length());
 	}
 }

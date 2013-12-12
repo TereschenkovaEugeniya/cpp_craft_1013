@@ -1,6 +1,4 @@
-#include "market_data_receiver.h"
-#include "market_data_processor_helper.h"
-#include <boost/thread.hpp>
+#include "minute_market_data.h"
 #include <csignal>
 
 boost::condition_variable cond;
@@ -15,10 +13,9 @@ int main()
     using namespace multicast_communication;
     
 	std::string config_path(SOURCE_DIR "/tests/data/config.ini");
-	std::ofstream processor_output(BINARY_DIR "/market_data.dat");
+	std::string output_dir(BINARY_DIR "/market_data.dat");
 
-	market_data_processor_helper processor(processor_output);
-	market_data_receiver receiver(config_path, processor);
+	minute_calculator::minute_market_data mmd(config_path, output_dir);
 
 	boost::mutex mtx;
 
