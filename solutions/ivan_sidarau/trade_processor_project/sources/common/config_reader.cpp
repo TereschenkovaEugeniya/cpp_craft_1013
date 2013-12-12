@@ -8,6 +8,9 @@ common::config_reader::config_reader( const std::string& filename )
 {
 	std::ifstream ifs( filename.c_str(), std::ios::in );
 	
+	if ( !ifs.is_open() )
+		throw std::logic_error( "no config file found" );
+
 	ifs >> trade_receive_threads_size_;
 	ifs >> quote_receive_threads_size_;
 
@@ -37,6 +40,23 @@ void common::config_reader::read_addresses_( std::istream& ifs, addresses& read_
 		std::string ip_address;
 		unsigned short port;
 		ifs >> ip_address >> port;
-		trade_listen_addresses_.push_back( address( ip_address, port ) );
+		read_addresses.push_back( address( ip_address, port ) );
 	}
+}
+//
+size_t common::config_reader::trade_receive_threads_size() const
+{
+	return trade_receive_threads_size_;
+}
+size_t common::config_reader::quote_receive_threads_size() const
+{
+	return quote_receive_threads_size_;
+}
+const common::addresses& common::config_reader::trade_listen_addresses() const
+{
+	return trade_listen_addresses_;
+}
+const common::addresses& common::config_reader::quote_listen_addresses() const
+{
+	return quote_listen_addresses_;
 }

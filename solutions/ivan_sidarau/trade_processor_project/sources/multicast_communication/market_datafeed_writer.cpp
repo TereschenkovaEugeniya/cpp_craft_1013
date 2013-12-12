@@ -13,12 +13,12 @@ multicast_communication::market_datafeed_writer::~market_datafeed_writer()
 	log_writer_.wait();
 }
 
-void multicast_communication::market_datafeed_writer::new_trade( const trade_message_ptr& trade )
+void multicast_communication::market_datafeed_writer::new_trade( trade_message_ptr& trade )
 {
 	output_.note() << *trade;
 }
 
-void multicast_communication::market_datafeed_writer::new_quote( const quote_message_ptr& quote )
+void multicast_communication::market_datafeed_writer::new_quote( quote_message_ptr& quote )
 {
 	output_.note() << *quote;
 }

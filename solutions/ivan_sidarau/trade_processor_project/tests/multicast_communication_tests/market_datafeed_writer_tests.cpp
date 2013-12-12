@@ -13,8 +13,8 @@ namespace multicast_communication
 				market_datafeed_writer writer_;
 			public:
 				explicit market_datafeed_writer_test_helper( const std::string& filename );
-				void write( const trade_message_ptr& trade );
-				void write( const quote_message_ptr& quote );
+				void write( trade_message_ptr& trade );
+				void write( quote_message_ptr& quote );
 			};
 		}
 	}
@@ -24,11 +24,11 @@ multicast_communication::tests_::detail::market_datafeed_writer_test_helper::mar
 : writer_( filename )
 {
 }
-void multicast_communication::tests_::detail::market_datafeed_writer_test_helper::write( const trade_message_ptr& trade )
+void multicast_communication::tests_::detail::market_datafeed_writer_test_helper::write( trade_message_ptr& trade )
 {
 	writer_.new_trade( trade );
 }
-void multicast_communication::tests_::detail::market_datafeed_writer_test_helper::write( const quote_message_ptr& quote )
+void multicast_communication::tests_::detail::market_datafeed_writer_test_helper::write( quote_message_ptr& quote )
 {
 	writer_.new_quote( quote );
 }

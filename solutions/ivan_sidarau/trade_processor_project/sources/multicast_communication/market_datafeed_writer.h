@@ -7,7 +7,8 @@
 #include <queue_logger.h>
 #include <task_processor.h>
 
-#include <market_data_processor.h>
+#include <cqs_parser.h>
+#include <cts_parser.h>
 
 namespace multicast_communication
 {
@@ -19,7 +20,7 @@ namespace multicast_communication
 		}
 	}
 
-	class market_datafeed_writer : public market_data_processor
+	class market_datafeed_writer : public trade_processor, public quote_processor
 	{
 		friend class tests_::detail::market_datafeed_writer_test_helper;
 
@@ -32,8 +33,8 @@ namespace multicast_communication
 		explicit market_datafeed_writer( const std::string& filename );
 		virtual ~market_datafeed_writer();
 	private:
-		virtual void new_trade( const trade_message_ptr& );
-		virtual void new_quote( const quote_message_ptr& );
+		virtual void new_trade( trade_message_ptr& );
+		virtual void new_quote( quote_message_ptr& );
 	};
 }
 

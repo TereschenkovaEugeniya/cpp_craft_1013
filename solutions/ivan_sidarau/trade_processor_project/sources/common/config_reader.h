@@ -24,6 +24,12 @@ namespace common
 	private:
 		void check_thread_size_( const size_t readed_size );
 		void read_addresses_( std::istream&, addresses& );
+	public:
+		size_t trade_receive_threads_size() const;
+		size_t quote_receive_threads_size() const;
+
+		const addresses& trade_listen_addresses() const;
+		const addresses& quote_listen_addresses() const;
 	};
 }
 

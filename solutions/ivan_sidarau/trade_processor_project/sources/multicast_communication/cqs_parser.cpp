@@ -54,6 +54,8 @@ void multicast_communication::cqs_parser::filter_messages_( const char* parsing_
 			after_parsing_ptr = std::find( parsing_ptr, after_parsing_ptr, cqs_parser::US );
 
 		size_t diff = after_parsing_ptr - parsing_ptr;
+		if ( diff > size )
+			diff = size;
 		if ( *after_parsing_ptr == cqs_parser::US )
 		{
 			diff += 1; // cts_parser::US

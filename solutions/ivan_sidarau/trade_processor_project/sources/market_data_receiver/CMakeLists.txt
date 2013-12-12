@@ -4,6 +4,8 @@ find_package( Boost ${SEARCH_PARAMETERS} COMPONENTS
 	thread
 	date_time
 	chrono
+	regex
+	filesystem
 )
 
 find_package( system_utilities ${SEARCH_PARAMETERS} COMPONENTS
