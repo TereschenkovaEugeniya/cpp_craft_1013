@@ -12,8 +12,8 @@ int main()
 {
     using namespace multicast_communication;
     
-	std::string config_path(SOURCE_DIR "/tests/data/config.ini");
-	std::string output_dir(BINARY_DIR "/market_data.dat");
+	const std::string config_path(SOURCE_DIR "/tests/data/config.ini");
+	const std::string output_dir(BINARY_DIR "/market_data.dat");
 
 	minute_calculator::minute_market_data mmd(config_path, output_dir);
 

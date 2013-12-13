@@ -1,13 +1,9 @@
 #include "test_registrator.h"
 
-#include <market_data_processor.h>
-#include <market_data_processor_helper.h>
-#include <market_data_receiver.h>
+#include <minute_market_data.h>
 #include <boost/format.hpp>
-#include <boost/filesystem.hpp>
-#include <fstream>
 
-namespace multicast_communication
+namespace minute_calculator
 {
 namespace tests_
 {
@@ -26,7 +22,7 @@ void write_quote(const std::string& block, std::ofstream& test_output)
 	{
 		if (*it == us || *it == etx)
 		{
-			quote_message qm;
+			multicast_communication::quote_message qm;
 			qm.initialize(msg);
 
 			test_output << std::fixed << "Q" << " "
@@ -63,7 +59,7 @@ void write_trade(const std::string& block, std::ofstream& test_output)
     {
 	    if (*it == us || *it == etx)
 	    {
-		    trade_message tm;
+		    multicast_communication::trade_message tm;
 		    tm.initialize(msg);
 
 		    test_output << std::fixed << "T" << " "
@@ -117,7 +113,7 @@ void send_msg(const std::pair<std::string, unsigned short>& port, std::ofstream&
 		}
                 
 		socket.send_to(boost::asio::buffer(msg), endpoint);
-        Sleep(150);
+        Sleep(100);
 		if (is_trade)
 		{
 			write_trade(msg, test_output);
@@ -134,12 +130,11 @@ void send_msg(const std::pair<std::string, unsigned short>& port, std::ofstream&
 	
 }
 
-void market_data_processor_tests()
+void minute_market_data_tests()
 {	
-	std::string processor_output_path = BINARY_DIR "/processor.dat";
+	std::string output_dir = BINARY_DIR;
 	std::string test_output_path = BINARY_DIR "/test.dat";
 
-	std::ofstream processor_output(processor_output_path);
 	std::ofstream test_output(test_output_path);
 
 	std::vector<std::pair<std::string, unsigned short> > trade_ports;
@@ -164,9 +159,8 @@ void market_data_processor_tests()
 	quote_ports.push_back(std::make_pair("233.200.79.7", 61007));
 	
 	
-	market_data_processor_helper mdpth(processor_output);
-	market_data_receiver mdr(4, 4, trade_ports, quote_ports, mdpth);
-
+    minute_market_data mmd(4, 4, trade_ports, quote_ports, output_dir);
+    
 	boost::thread_group senders;
 	for (auto it = trade_ports.begin(); it != trade_ports.end(); ++it)
 	{
@@ -178,16 +172,11 @@ void market_data_processor_tests()
 	}
 	senders.join_all();
 
-     BOOST_CHECK_NO_THROW
-	 (
-	    mdr.stop();
-	    processor_output.close();
-	    test_output.close();
-     )
-
-	using boost::filesystem::file_size;
-	using boost::filesystem::path;
-	BOOST_CHECK_EQUAL(file_size(test_output_path), file_size(processor_output_path));
+    BOOST_CHECK_NO_THROW
+    (
+        mmd.stop();
+        test_output.close();
+    )
 }
 
 }

@@ -3,10 +3,10 @@
 
 namespace multicast_communication
 {
-	market_data_receiver::market_data_receiver(const size_t& trade_thread_size,
-												const size_t& quote_thread_size,
-												const std::vector<std::pair<std::string, unsigned short> >& trade_ports,
-												const std::vector<std::pair<std::string, unsigned short> >& quote_ports,
+	market_data_receiver::market_data_receiver(const size_t trade_thread_size,
+												const size_t quote_thread_size,
+												const ports_vector& trade_ports,
+												const ports_vector& quote_ports,
 												market_data_processor& processor) : processor_(processor), working_(false)
 	{
 		initialize(trade_thread_size, quote_thread_size, trade_ports, quote_ports);		
@@ -80,10 +80,10 @@ namespace multicast_communication
 		work_threads_.join_all();
 	}
 
-	void market_data_receiver::initialize(const size_t& trade_thread_size,
-											const size_t& quote_thread_size,
-											const std::vector<std::pair<std::string, unsigned short> >& trade_ports,
-											const std::vector<std::pair<std::string, unsigned short> >& quote_ports)
+	void market_data_receiver::initialize(const size_t trade_thread_size,
+											const size_t quote_thread_size,
+											const ports_vector& trade_ports,
+											const ports_vector& quote_ports)
 	{
 		working_ = true;
 
@@ -127,9 +127,9 @@ namespace multicast_communication
 			std::string block;
 			if (trades_.pop(block))
 			{
-				char us = 0x1F;
-				char soh = 0x01;
-				char etx = 0x03;
+				static const char us = 0x1F;
+				static const char soh = 0x01;
+				static const char etx = 0x03;
 				std::string msg;
 				for (auto it = block.begin(); it != block.end(); ++it)
 				{
@@ -164,9 +164,9 @@ namespace multicast_communication
 			std::string block;
 			if (quotes_.pop(block))
 			{
-				char us = 0x1F;
-				char soh = 0x01;
-				char etx = 0x03;
+				static const char us = 0x1F;
+				static const char soh = 0x01;
+				static const char etx = 0x03;
 				std::string msg;
 				for (auto it = block.begin(); it != block.end(); ++it)
 				{

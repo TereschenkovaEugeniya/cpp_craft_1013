@@ -7,6 +7,8 @@
 
 namespace multicast_communication
 {
+    typedef std::vector<std::pair<std::string, unsigned short> > ports_vector;
+
 	class market_data_receiver : private boost::noncopyable
 	{
 		task5_6::thread_safe_queue<std::string> quotes_;
@@ -24,10 +26,10 @@ namespace multicast_communication
 		bool working_;
 
 	public:
-		explicit market_data_receiver(const size_t& trade_thread_size,
-										const size_t& quote_thread_size,
-										const std::vector<std::pair<std::string, unsigned short> >& trade_ports,
-										const std::vector<std::pair<std::string, unsigned short> >& quote_ports,
+		explicit market_data_receiver(const size_t trade_thread_size,
+										const size_t quote_thread_size,
+										const ports_vector& trade_ports,
+										const ports_vector& quote_ports,
 										market_data_processor& processor);
 
 		explicit market_data_receiver(const std::string& file_name,
@@ -42,9 +44,9 @@ namespace multicast_communication
 		void trades_thread();
 		void quotes_thread();
 
-		void initialize(const size_t& trade_thread_size,
-										const size_t& quote_thread_size,
-										const std::vector<std::pair<std::string, unsigned short> >& trade_ports,
-										const std::vector<std::pair<std::string, unsigned short> >& quote_ports);
+		void initialize(const size_t trade_thread_size,
+						const size_t quote_thread_size,
+						const ports_vector& trade_ports,
+						const ports_vector& quote_ports);
 	};
 }

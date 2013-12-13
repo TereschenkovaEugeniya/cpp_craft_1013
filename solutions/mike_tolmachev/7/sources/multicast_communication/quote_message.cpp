@@ -54,28 +54,33 @@ bool multicast_communication::quote_message::initialize(const std::string& msg)
 		return false;
 	}
 
-	std::string header = msg.substr(0, 24);
-	std::string body = msg.substr(24, msg.length() - 24);
+    try
+    {
+	    std::string header = msg.substr(0, 24);
+	    std::string body = msg.substr(24, msg.length() - 24);
 
-	std::string time = header.substr(18, 3);
-	time_ = 3600 * time_stamp_[time[0]] + 60 * time_stamp_[time[1]] + time_stamp_[time[2]];
+	    std::string time = header.substr(18, 3);
+	    time_ = 3600 * time_stamp_[time[0]] + 60 * time_stamp_[time[1]] + time_stamp_[time[2]];
 
-	if ((header[0] == 'E' || header[0] == 'L') && header[1] == 'D')
-	{
-		return init_short(body);
-	}
-	else if ((header[0] == 'B' || header[0] == 'E' || header[0] == 'L') && header[1] == 'B')
-	{
-		return init_long(body);
-	}
+	    if ((header[0] == 'E' || header[0] == 'L') && header[1] == 'D')
+	    {
+		    return init_short(body);
+	    }
+	    else if ((header[0] == 'B' || header[0] == 'E' || header[0] == 'L') && header[1] == 'B')
+	    {
+		    return init_long(body);
+	    }
+    }
+    catch(...)
+    {
+        return false;
+    }
 
 	return false;
 }
 
 bool multicast_communication::quote_message::init_short(const std::string& body)
 {
-	int size = body.length();
-
 	if (body.length() < 34)
 	{
 		return false;

@@ -31,7 +31,7 @@ public:
 			data_.open_prise == 77.9 &&
 			data_.high_prise == 88.9 &&
 			data_.low_price == 77.9 &&
-			//security_symbol == stock &&
+			security_symbol.compare(stock) == 0 &&
 			data_.minute == 36225u &&
 			data_.bid == 12 &&
 			data_.ask == 8.0
@@ -40,32 +40,33 @@ public:
 };
 
 void minute_calculator_tests()
-{
-	BOOST_CHECK_NO_THROW
-	(
-		market_minute_processor_helper mmph;
+{	
+	market_minute_processor_helper mmph;
 
-		minute_calculator calc(mmph);
+	minute_calculator calc(mmph);
 
-		multicast_communication::trade_message_ptr tm1(new multicast_communication::trade_message);
-		tm1->initialize("EIAO A  000146235T:3]008ACN@0100B00007790DD ");
-		multicast_communication::trade_message_ptr tm2(new multicast_communication::trade_message);
-		tm2->initialize("EIAO A  000146235T:3b008ACN@0100B00008890DD ");
-		multicast_communication::trade_message_ptr tm3(new multicast_communication::trade_message);
-		tm3->initialize("EIAO A  000146235T:5]008ACN@0100B00008890DD ");
+	multicast_communication::trade_message_ptr tm1(new multicast_communication::trade_message);
+	tm1->initialize("EIAO A  000146235T:3]008ACN@0100B00007790DD ");
+	multicast_communication::trade_message_ptr tm2(new multicast_communication::trade_message);
+	tm2->initialize("EIAO A  000146235T:3b008ACN@0100B00008890DD ");
+	multicast_communication::trade_message_ptr tm3(new multicast_communication::trade_message);
+	tm3->initialize("EIAO A  000146235T:5]008ACN@0100B00008890DD ");
 
-		multicast_communication::quote_message_ptr qm1(new multicast_communication::quote_message);
-		qm1->initialize("EDEO A  003759032T:3]073ACNR  B00004147006 B00004148004 12");
-		multicast_communication::quote_message_ptr qm2(new multicast_communication::quote_message);
-		qm2->initialize("EDEO A  003759032T:3]073ACNR  B00004147006 B00004148004 12");
+	multicast_communication::quote_message_ptr qm1(new multicast_communication::quote_message);
+	qm1->initialize("EDEO A  003759032T:3]073ACNR  B00004147006 B00004148004 12");
+	multicast_communication::quote_message_ptr qm2(new multicast_communication::quote_message);
+	qm2->initialize("EDEO A  003759032T:3]073ACNR  B00004147006 B00004148004 12");
 	
-		calc.new_trade( tm1 );
-		calc.new_quote( qm1 );
-		calc.new_quote( qm2 );
-		calc.new_trade( tm2 );
-		calc.new_trade( tm3 );
-		BOOST_CHECK_EQUAL( mmph.compare(), true );
-	)
+	calc.new_trade( tm1 );
+    BOOST_CHECK_EQUAL( mmph.compare(), false );
+	calc.new_quote( qm1 );
+    BOOST_CHECK_EQUAL( mmph.compare(), false );
+	calc.new_quote( qm2 );
+    BOOST_CHECK_EQUAL( mmph.compare(), false );
+	calc.new_trade( tm2 );
+    BOOST_CHECK_EQUAL( mmph.compare(), false );
+	calc.new_trade( tm3 );
+	BOOST_CHECK_EQUAL( mmph.compare(), true );
 }
 
 }

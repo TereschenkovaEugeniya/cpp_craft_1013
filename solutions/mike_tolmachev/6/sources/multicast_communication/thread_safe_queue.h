@@ -20,6 +20,7 @@ public:
 
 	void push(const T& element);
 	bool pop(T& element);
+    bool empty();
 };
 
 template< typename T >
@@ -51,6 +52,13 @@ bool thread_safe_queue< T >::pop(T& elem)
 	queue_.pop();
 
 	return true;
+}
+
+template< typename T >
+bool thread_safe_queue< T >::empty()
+{
+	boost::mutex::scoped_lock lock(mtx_);
+	return queue_.empty();
 }
 
 }

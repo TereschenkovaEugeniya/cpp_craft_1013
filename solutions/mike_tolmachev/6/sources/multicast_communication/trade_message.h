@@ -11,16 +11,21 @@ namespace multicast_communication
 	class trade_message
 	{
 		std::map<char, double> denominators_;
+		std::map<char, uint32_t> time_stamp_;
 
 		std::string security_symbol_;
 		double price_;
 		double volume_;
+
+		uint32_t time_;
 	public:
 		trade_message();
 
 		std::string security_symbol() const;
 		double price() const;
 		double volume() const;
+
+		uint32_t time() const;
 
 		bool initialize(const std::string& msg);
 	private:

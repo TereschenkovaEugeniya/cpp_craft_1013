@@ -11,12 +11,15 @@ namespace multicast_communication
 	class quote_message
 	{
 		std::map<char, double> denominators_;
+		std::map<char, uint32_t> time_stamp_;
 
 		std::string security_symbol_;
 		double bid_price_;
 		double bid_volume_;
 		double offer_price_;
 		double offer_volume_;
+
+		uint32_t time_;
 	public:
 		quote_message();
 
@@ -25,6 +28,8 @@ namespace multicast_communication
 		double bid_volume() const;
 		double offer_price() const;
 		double offer_volume() const;
+
+		uint32_t time() const;
 
 		bool initialize(const std::string& msg);
 	private:
