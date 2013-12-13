@@ -100,6 +100,9 @@ macro( compile )
 endmacro( compile )
 
 macro( compile_tests )
+
+	add_definitions( -DTEST_DIR="${PROJECT_SOURCE_DIR}/tests/data" )
+
 	if ( NOT BOOST_STATIC )
 		add_definitions( -DBOOST_TEST_DYN_LINK -DBOOST_TEST_NO_LIB )
 	endif( NOT BOOST_STATIC )

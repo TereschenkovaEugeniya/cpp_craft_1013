@@ -42,40 +42,54 @@ quote_message::quote_message(std::istream& in, message_type type):type_(type)
     {
     case type_short:
         {
-            security_symbol_ = get<std::string, short_security_symbol_len>(in);
+            try
+            {
+                security_symbol_ = get<std::string, short_security_symbol_len>(in);
 		
-	        in.seekg(short_bid_price_denominator_indicator_left, std::istream::cur);
+	            in.seekg(short_bid_price_denominator_indicator_left, std::istream::cur);
 		
-	        double bid_price_denominator = denominators.at(get<std::string, short_denominato_len>(in)[0]);
-	        bid_price_ = get<double, short_price_len>(in)/ bid_price_denominator;
-	        bid_volume_ = get<double, short_volume_len>(in);
+	            double bid_price_denominator = denominators.at(get<std::string, short_denominato_len>(in)[0]);
+	            bid_price_ = get<double, short_price_len>(in)/ bid_price_denominator;
+	            bid_volume_ = get<double, short_volume_len>(in);
 
-	        in.seekg(short_offer_price_denominator_indicator_left, std::istream::cur);
+	            in.seekg(short_offer_price_denominator_indicator_left, std::istream::cur);
 		
-	        double offer_price_denominator = denominators.at(get<std::string, short_denominato_len>(in)[0]);
-	        offer_price_ = get<double, short_price_len>(in)/ offer_price_denominator;
-	        offer_volume_ = get<double, short_volume_len>(in);
+	            double offer_price_denominator = denominators.at(get<std::string, short_denominato_len>(in)[0]);
+	            offer_price_ = get<double, short_price_len>(in)/ offer_price_denominator;
+	            offer_volume_ = get<double, short_volume_len>(in);
 
-	        in.seekg(short_quote_end_left, std::istream::cur);            
+	            in.seekg(short_quote_end_left, std::istream::cur);   
+            }
+            catch(...)
+            {
+                type_ = type_unknown;
+            }
         }
         break;
     case type_long:
         {
-            security_symbol_ = get<std::string, long_security_symbol_len>(in);
+            try
+            {
+                security_symbol_ = get<std::string, long_security_symbol_len>(in);
 		
-	        in.seekg(long_bid_price_denominator_indicator_left, std::istream::cur);
+	            in.seekg(long_bid_price_denominator_indicator_left, std::istream::cur);
 		
-	        double bid_price_denominator = denominators.at(get<std::string, long_denominato_len>(in)[0]);
-	        bid_price_ = get<double, long_price_len>(in)/ bid_price_denominator;
-	        bid_volume_ = get<double, long_volume_len>(in);
+	            double bid_price_denominator = denominators.at(get<std::string, long_denominato_len>(in)[0]);
+	            bid_price_ = get<double, long_price_len>(in)/ bid_price_denominator;
+	            bid_volume_ = get<double, long_volume_len>(in);
 
-	        in.seekg(long_offer_price_denominator_indicator_left, std::istream::cur);
+	            in.seekg(long_offer_price_denominator_indicator_left, std::istream::cur);
 		
-	        double offer_price_denominator = denominators.at(get<std::string, long_denominato_len>(in)[0]);
-	        offer_price_ = get<double, long_price_len>(in)/ offer_price_denominator;
-	        offer_volume_ = get<double, long_volume_len>(in);
+	            double offer_price_denominator = denominators.at(get<std::string, long_denominato_len>(in)[0]);
+	            offer_price_ = get<double, long_price_len>(in)/ offer_price_denominator;
+	            offer_volume_ = get<double, long_volume_len>(in);
 
-	        in.seekg(long_quote_end_left, std::istream::cur);
+	            in.seekg(long_quote_end_left, std::istream::cur);
+            }
+            catch(...)
+            {
+                type_ = type_unknown;
+            }
         }
         break;
     }
@@ -85,9 +99,7 @@ template<>
 quote_message_ptr build<quote_message_ptr>( std::istream& in )
 {
     using namespace multicast_communication;
-    char type;
 	in.seekg(1, std::istream::cur);
-	type = in.get();
 
 	switch(in.get())
 	{
@@ -98,7 +110,7 @@ quote_message_ptr build<quote_message_ptr>( std::istream& in )
         in.seekg(22, std::istream::cur);
 		return quote_message_ptr( new quote_message(in, type_long));
 	}
-    return quote_message_ptr();
+    return quote_message_ptr( new quote_message() );
 }
 
 std::string quote_message::security_symbol( ) const

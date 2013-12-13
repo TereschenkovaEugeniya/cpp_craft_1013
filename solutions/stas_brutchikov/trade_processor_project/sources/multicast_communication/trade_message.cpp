@@ -40,29 +40,43 @@ trade_message::trade_message( std::istream& in, message_type type ):type_(type)
     {
         case type_short:
         {
-            security_symbol_ = get<std::string, short_security_symbol_len>( in );		
-            in.seekg(short_trade_volume_left, std::istream::cur);
+            try
+            {
+                security_symbol_ = get<std::string, short_security_symbol_len>( in );		
+                in.seekg(short_trade_volume_left, std::istream::cur);
 	
-            volume_ = get< double, short_trade_volume_len>(in);
+                volume_ = get< double, short_trade_volume_len>(in);
 
-            double denominator = denominators.at( get< std::string, short_price_denominator_indicator_len >( in )[0] );
-            price_ = get< double, short_trade_price_len>(in)/ denominator;	
+                double denominator = denominators.at( get< std::string, short_price_denominator_indicator_len >( in )[0] );
+                price_ = get< double, short_trade_price_len>(in)/ denominator;	
 
-            in.seekg( short_trade_end_left, std::istream::cur );
+                in.seekg( short_trade_end_left, std::istream::cur );
+            }
+            catch(...)
+            {
+                type_ = type_unknown;
+            }
         }
         break;
     case type_long:
         {
-	        security_symbol_ = get<std::string, long_security_symbol_len>(in);
+            try
+            {
+	            security_symbol_ = get<std::string, long_security_symbol_len>(in);
 
-	        in.seekg(long_price_denominator_indicator_left, std::istream::cur);
+	            in.seekg(long_price_denominator_indicator_left, std::istream::cur);
 
-	        double denominator = denominators.at( get< std::string,  long_price_denominator_indicator_len >( in )[0] );
-	        price_ = get<double, long_trade_price_len>(in)/ denominator;	
+	            double denominator = denominators.at( get< std::string,  long_price_denominator_indicator_len >( in )[0] );
+	            price_ = get<double, long_trade_price_len>(in)/ denominator;	
 	
-	        volume_ = get<double, long_trade_volume_len >(in);
+	            volume_ = get<double, long_trade_volume_len >(in);
 
-	        in.seekg( long_trade_end_left, std::istream::cur );
+	            in.seekg( long_trade_end_left, std::istream::cur );
+            }
+            catch(...)
+            {
+                type_ = type_unknown;
+            }
         }
         break;
     }
@@ -89,9 +103,7 @@ template<>
 trade_message_ptr build<trade_message_ptr>( std::istream& in )
 {
     using namespace multicast_communication;
-    char type;
 	in.seekg(1, std::istream::cur);
-	type = in.get();
 
 	switch(in.get())
 	{
@@ -102,7 +114,7 @@ trade_message_ptr build<trade_message_ptr>( std::istream& in )
         in.seekg(22, std::istream::cur);
 		return trade_message_ptr( new trade_message(in, type_long));
 	}
-    return trade_message_ptr();
+    return trade_message_ptr( new trade_message() );
 }
 
 std::ostream& operator << ( std::ostream& out, const trade_message_ptr& msg )

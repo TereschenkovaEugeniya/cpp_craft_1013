@@ -29,14 +29,14 @@ namespace multicast_communication
         double bid_volume_;        
         double offer_price_; 
         double offer_volume_; 
-        const message_type type_;
+        message_type type_;
 	};
 
 	typedef boost::shared_ptr< quote_message > quote_message_ptr;
 
    // quote_message_ptr build_quote( std::istream& in );
 
-    typedef std::vector< quote_message_ptr > quote_messages_ptr;
+    typedef std::vector< quote_message_ptr > quotes_messages_ptr;
 
     std::ostream& operator << ( std::ostream& out, const quote_message_ptr& msg );
 

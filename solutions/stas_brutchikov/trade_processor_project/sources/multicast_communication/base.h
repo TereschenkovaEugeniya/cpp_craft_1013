@@ -38,10 +38,10 @@ const char ETX = 0x03;
 const char US = 0x1f;
 
 typedef std::pair < std::string, unsigned short > address_port;
-typedef std::vector < address_port > vector_adres_port;
+typedef std::vector < address_port > vector_address_port;
 
-template<typename T>
-T build( std::istream& in );
+template<typename message_ptr>
+message_ptr build( std::istream& in );
 
 template<typename container_message_ptr, typename message_ptr>
 bool parse( const std::string& data, container_message_ptr& obj )

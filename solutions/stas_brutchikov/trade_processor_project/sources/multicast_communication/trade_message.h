@@ -24,7 +24,7 @@ namespace multicast_communication
         std::string security_symbol_;
     	double price_;
 		double volume_;
-        const message_type type_;
+        message_type type_;
 	};
 
 	typedef boost::shared_ptr< trade_message > trade_message_ptr;
@@ -33,6 +33,8 @@ namespace multicast_communication
     typedef std::vector< trade_message_ptr > trades_messages_ptr;
 
     std::ostream& operator << ( std::ostream& out, const trade_message_ptr& msg );
+
+
 
 }
 

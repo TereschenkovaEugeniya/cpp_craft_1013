@@ -44,8 +44,7 @@ namespace multicast_communication
 
             
         template<typename container_message_ptr, typename message_ptr>
-        void initialize_market_group( market_group& group, const size_t thread_size,  const vector_adres_port& ports,
-            boost::function< void ( const message_ptr& ) > mess_processor)
+        void initialize_market_group( market_group& group, const size_t thread_size,  const vector_address_port& ports)
         {
             group.io_group.resize(thread_size);
             for( vector_io_ptr::iterator iter = group.io_group.begin(); iter != group.io_group.end(); ++iter )
@@ -70,7 +69,7 @@ namespace multicast_communication
 				                std::for_each(messages.begin(), messages.end(),
                                     [&](const message_ptr& msg)
 					                {
-                                        mess_processor(msg);
+                                        processor_.process(msg);
 					                }
 				                    );
 		                    }));
@@ -104,14 +103,14 @@ namespace multicast_communication
     public:
         explicit market_data_receiver( const size_t trade_thread_size,
                                        const size_t quote_thread_size,
-                                       const vector_adres_port& trade_ports,
-                                       const vector_adres_port& quote_ports,
+                                       const vector_address_port& trade_ports,
+                                       const vector_address_port& quote_ports,
                                        market_data_processor& processor )
             :processor_( processor )
         {
 
-            initialize_market_group<trades_messages_ptr, trade_message_ptr>(trade_group, trade_thread_size, trade_ports, boost::bind( &market_data_processor::new_trade, &processor_, _1));
-            initialize_market_group<quote_messages_ptr, quote_message_ptr>(quote_group, quote_thread_size, quote_ports, boost::bind( &market_data_processor::new_quote, &processor_, _1));     
+            initialize_market_group<trades_messages_ptr, trade_message_ptr>(trade_group, trade_thread_size, trade_ports);
+            initialize_market_group<quotes_messages_ptr, quote_message_ptr>(quote_group, quote_thread_size, quote_ports);     
         }
         ~market_data_receiver()
         {
