@@ -14,7 +14,6 @@
 #include <boost/thread/mutex.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/system/error_code.hpp>
-#include <map>
 
 typedef std::pair<std::string, unsigned short> udpEndpoint_t;
 typedef std::vector<udpEndpoint_t> udpEndpoints_t;
@@ -38,6 +37,7 @@ private:
 	udpEndpoints_t tradesEndpoints_;
 	udpEndpoints_t quotesEndpoints_;
 	market_data_receiver& dataReceiver_;
+	denominator denominator_;
 
 	std::vector<char*> quoteBuffs_;
 	boost::asio::io_service quoteService_;
@@ -58,15 +58,8 @@ private:
 	void processTradeMessage(std::size_t messageSize, size_t bufferIndex);
 	void startQuoteServices();
 	void startTradeServices();
-	std::string chars2string(const char* buffer, const size_t bufferSize)const;
-	void extractQuoteMessage(const shortQuote_t& shortQuote, quote_message& quoteMessage);
-	void extractQuoteMessage(const longQuote_t& longQuote, quote_message& quoteMessage);
-	void extractTradeMessage(const shortTrade_t& shortTrade, trade_message& tradeMessage);
-	void extractTradeMessage(const longTrade_t& longTrade, trade_message& tradeMessage);
 
-	static const std::map<const char, double> denominators;
 	const static size_t buffMaxSize_;
-	double getDenominatorByChar(const char denominatorChar);
 };
 
 #endif /* MULTICASTCOMMUNICATION_H_ */

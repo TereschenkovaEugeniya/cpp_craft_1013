@@ -1,13 +1,7 @@
 #include "multicast_communication.h"
-#include <sstream>
 
 const size_t multicast_communication::buffMaxSize_ = 1024;
 
-const std::map<const char, double> multicast_communication::denominators = { {
-		'A', 10.0 }, { 'B', 100.0 }, { 'C', 1000.0 }, { 'D', 10000.0 }, { 'E',
-		100000.0 }, { 'F', 1000000.0 }, { 'G', 10000000.0 },
-		{ 'H', 100000000.0 }, { '3', 8.0 }, { '4', 16.0 }, { '5', 32.0 }, { '6',
-				64.0 }, { '7', 128.0 }, { '8', 256.0 }, { 'I', 1.0 } };
 
 multicast_communication::multicast_communication(size_t tradeThreadsCount,
 		size_t quoteThreadsCount, udpEndpoints_t tradesEndpoints,
@@ -118,20 +112,17 @@ void multicast_communication::processQuoteMessage(std::size_t messageSize,
 		size_t bufferIndex) {
 	binReader bReader(quoteBuffs_[bufferIndex], messageSize);
 	tqHeader_t messageHeader;
-	quote_message qm;
 	bReader.readMessageHeader(messageHeader);
 	if (messageHeader.isShortQuote()) {
 		shortQuote_t shortQuouteMsg;
 		bReader.readShortQuote(shortQuouteMsg);
-		extractQuoteMessage(shortQuouteMsg, qm);
 		boost::lock_guard<boost::mutex> lock(mtx_);
-		dataReceiver_.quotes_.push_back(qm);
+		dataReceiver_.addQuote(shortQuouteMsg);
 	} else if (messageHeader.isLongQuote()) {
 		longQuote_t longQuoteMsg;
 		bReader.readLongQuote(longQuoteMsg);
-		extractQuoteMessage(longQuoteMsg, qm);
 		boost::lock_guard<boost::mutex> lock(mtx_);
-		dataReceiver_.quotes_.push_back(qm);
+		dataReceiver_.addQuote(longQuoteMsg);
 	}
 }
 
@@ -139,20 +130,17 @@ void multicast_communication::processTradeMessage(std::size_t messageSize,
 		size_t bufferIndex) {
 	binReader bReader(tradeBuffs_[bufferIndex], messageSize);
 	tqHeader_t messageHeader;
-	trade_message tm;
 	bReader.readMessageHeader(messageHeader);
 	if (messageHeader.isShortTrade()) {
 		shortTrade_t shortTradeMsg;
 		bReader.readShortTrade(shortTradeMsg);
-		extractTradeMessage(shortTradeMsg, tm);
 		boost::lock_guard<boost::mutex> lock(mtx_);
-		dataReceiver_.trades_.push_back(tm);
+		dataReceiver_.addTrade(shortTradeMsg);
 	} else if (messageHeader.isLongTrade()) {
 		longTrade_t longTradeMsg;
 		bReader.readLongTrade(longTradeMsg);
-		extractTradeMessage(longTradeMsg, tm);
 		boost::lock_guard<boost::mutex> lock(mtx_);
-		dataReceiver_.trades_.push_back(tm);
+		dataReceiver_.addTrade(longTradeMsg);
 	}
 }
 
@@ -197,75 +185,4 @@ void multicast_communication::startQuoteServices() {
 
 void multicast_communication::startTradeServices() {
 	tradeService_.run();
-}
-
-std::string multicast_communication::chars2string(const char* buffer,
-		const size_t bufferSize) const {
-	std::stringstream ss;
-	for (size_t i = 0; i < bufferSize; i++) {
-		ss << buffer[i];
-	}
-	return ss.str();
-}
-
-void multicast_communication::extractQuoteMessage(
-		const shortQuote_t& shortQuote, quote_message& quoteMessage) {
-	std::string strSecuritySymbol = chars2string(shortQuote.securitySymbol, 3);
-	quoteMessage.security_symbol = strSecuritySymbol;
-	quoteMessage.bid_price = atof(
-			chars2string(shortQuote.bidShortPrice, 8).c_str())
-			/ getDenominatorByChar(shortQuote.bidPriceDenominatorIndicator);
-	quoteMessage.bid_volume = atof(
-			chars2string(shortQuote.bidSizeUnitsOfTrade, 3).c_str());
-	quoteMessage.offer_price = atof(
-			chars2string(shortQuote.offerShortPrice, 8).c_str())
-			/ getDenominatorByChar(shortQuote.offerPriceDenominatorIndicator);
-	quoteMessage.offer_volume = atof(
-			chars2string(shortQuote.offerSizeInUnitsOfTrade, 3).c_str());
-}
-
-void multicast_communication::extractQuoteMessage(const longQuote_t& longQuote,
-		quote_message& quoteMessage) {
-	std::string strSecuritySymbol = chars2string(longQuote.securitySymbol, 11);
-	quoteMessage.security_symbol = strSecuritySymbol;
-	quoteMessage.bid_price = atof(
-			chars2string(longQuote.bidPrice_LowerLimitPriceBand, 12).c_str())
-			/ getDenominatorByChar(
-					longQuote.bidPrice_LowerLimitPriceBandDenominatorIndicator);
-	quoteMessage.bid_volume = atof(
-			chars2string(longQuote.bidSizeinUnitsofTrade, 7).c_str());
-	quoteMessage.offer_price =
-			atof(
-					chars2string(longQuote.offerPrice_UpperLimitPriceBand, 12).c_str())
-					/ getDenominatorByChar(
-							longQuote.offerPrice_UpperLimitPriceBandDenominatorIndicator);
-	quoteMessage.offer_volume = atof(
-			chars2string(longQuote.offerSizeinUnitsofTrade, 7).c_str());
-}
-
-void multicast_communication::extractTradeMessage(
-		const shortTrade_t& shortTrade, trade_message& tradeMessage) {
-	std::string strSecuritySymbol = chars2string(shortTrade.securitySymbol, 3);
-	tradeMessage.security_symbol = strSecuritySymbol;
-	tradeMessage.price = atof(chars2string(shortTrade.tradePrice, 8).c_str())
-			/ getDenominatorByChar(shortTrade.priceDenominatorIndicator);
-	tradeMessage.volume = atof(chars2string(shortTrade.tradeVolume, 4).c_str());
-}
-
-void multicast_communication::extractTradeMessage(const longTrade_t& longTrade,
-		trade_message& tradeMessage) {
-	std::string strSecuritySymbol = chars2string(longTrade.securitySymbol, 11);
-	tradeMessage.security_symbol = strSecuritySymbol;
-	tradeMessage.price = atof(chars2string(longTrade.tradePrice, 12).c_str())
-			/ getDenominatorByChar(longTrade.priceDenominatorIndicator);
-	tradeMessage.volume = atof(chars2string(longTrade.tradeVolume, 9).c_str());
-}
-
-double multicast_communication::getDenominatorByChar(
-		const char denominatorChar) {
-	if (denominators.count(denominatorChar)) {
-		return denominators.at(denominatorChar);
-	} else {
-		return 1.0;
-	}
 }
