@@ -160,53 +160,55 @@ multicast_communication::minute_datafeed
   std::vector<trade_message_ptr> market_trades = trades_[market];
   std::vector<quote_message_ptr> market_quotas = quotas_[market];
 
-
   minute_datafeed data;
   data.set_stock_name(market.c_str());
 
-  boost::uint32_t ts_open = market_trades[0]->get_timestamp();
-  boost::uint32_t ts_close = market_trades[0]->get_timestamp();
-  size_t open_msg_pos = 0;
-  size_t close_msg_pos = 0;
-
-  double high_price = 0.0;
-  double low_price = 100000000.0;
-  double volume = 0.0;
-  for (size_t i = 0; i < market_trades.size(); ++i)
+  // it may happens, that no one trade-message has been received
+  if (market_trades.size() > 0)
   {
-    if (market_trades[i]->price() >= high_price)
-      high_price = market_trades[i]->price();
-    else if (market_trades[i]->price() < low_price)
-      low_price = market_trades[i]->price();
-    
-    if (market_trades[i]->get_timestamp() < ts_open)
+    boost::uint32_t ts_open = market_trades[0]->get_timestamp();
+    boost::uint32_t ts_close = market_trades[0]->get_timestamp();
+    size_t open_msg_pos = 0;
+    size_t close_msg_pos = 0;
+
+    double high_price = 0.0;
+    double low_price = 100000000.0;
+    double volume = 0.0;
+    for (size_t i = 0; i < market_trades.size(); ++i)
     {
-      ts_open = market_trades[i]->get_timestamp();
-      open_msg_pos = i;      
+      if (market_trades[i]->price() >= high_price)
+        high_price = market_trades[i]->price();
+      else if (market_trades[i]->price() < low_price)
+        low_price = market_trades[i]->price();
+      
+      if (market_trades[i]->get_timestamp() < ts_open)
+      {
+        ts_open = market_trades[i]->get_timestamp();
+        open_msg_pos = i;      
+      }
+      else if (market_trades[i]->get_timestamp() > ts_close)
+      {
+        ts_close = market_trades[i]->get_timestamp();
+        close_msg_pos = i;
+      }
+      
+      volume += market_trades[i]->volume();
     }
-    else if (market_trades[i]->get_timestamp() > ts_close)
-    {
-      ts_close = market_trades[i]->get_timestamp();
-      close_msg_pos = i;
-    }
-    
-    volume += market_trades[i]->volume();
+
+    using namespace boost::posix_time;
+    using namespace boost::gregorian;
+    ptime begin_of_20_century(date(1900, Jan, 01));
+    time_period tp(begin_of_20_century, market_trades[open_msg_pos]->get_time());
+    boost::uint32_t seconds_count = static_cast<boost::uint32_t>(tp.length().total_seconds());
+
+    data.set_minute(seconds_count);
+    data.set_open_price(market_trades[open_msg_pos]->price());
+    data.set_high_price(high_price);
+    data.set_low_price(low_price);
+    data.set_close_price(market_trades[close_msg_pos]->price());
+    data.set_volume(volume);
   }
-
-  using namespace boost::posix_time;
-  using namespace boost::gregorian;
-  ptime begin_of_20_century(date(1900, Jan, 01));
-  time_period tp(begin_of_20_century, market_trades[open_msg_pos]->get_time());
-  boost::uint32_t seconds_count = static_cast<boost::uint32_t>(tp.length().total_seconds());
-
-  data.set_minute(seconds_count);
-  data.set_open_price(market_trades[open_msg_pos]->price());
-  data.set_high_price(high_price);
-  data.set_low_price(low_price);
-  data.set_close_price(market_trades[close_msg_pos]->price());
-  data.set_volume(volume);
-  
-  
+ 
   double ask = 0.0, bid = 0.0;
   for (size_t i = 0; i < market_quotas.size(); ++i)
   {
