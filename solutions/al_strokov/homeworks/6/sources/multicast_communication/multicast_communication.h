@@ -3,7 +3,7 @@
 
 #include "dataStructs.h"
 #include "binReader.h"
-#include "marketdatareceiver.h"
+#include "market_data_receiver.h"
 #include "quote_message.h"
 #include "trade_message.h"
 
@@ -18,8 +18,6 @@
 
 typedef std::pair<std::string, unsigned short> udpEndpoint_t;
 typedef std::vector<udpEndpoint_t> udpEndpoints_t;
-
-#define buffMaxSize_ 1024
 
 class multicast_communication:public boost::noncopyable{
 public:
@@ -49,6 +47,7 @@ private:
 	boost::asio::io_service tradeService_;
 	std::vector<boost::asio::ip::udp::endpoint> tradeEndpoints_;
 	std::vector<boost::asio::ip::udp::socket*> tradeSockets_;
+	boost::mutex mtx_;
 
 	void prepareSockets();
 	void registerQuoteListeners();
@@ -66,6 +65,7 @@ private:
 	void extractTradeMessage(const longTrade_t& longTrade, trade_message& tradeMessage);
 
 	static const std::map<const char, double> denominators;
+	const static size_t buffMaxSize_;
 	double getDenominatorByChar(const char denominatorChar);
 };
 

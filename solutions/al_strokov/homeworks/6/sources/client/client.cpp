@@ -1,7 +1,7 @@
 #include "multicast_communication.h"
 //#include "udp_listener.h"
 #include "market_data_processor.h"
-#include "marketdatareceiver.h"
+#include "market_data_receiver.h"
 
 #include <iostream>
 #include <boost/thread.hpp>
@@ -16,7 +16,7 @@
 multicast_communication *mc_p_;
 market_data_receiver *mdr_p_;
 
-void postPocess(){
+void postProcess(){
 	std::cout << "[postProcessing]" << std::endl;
 
 	std::ofstream ofs;
@@ -48,7 +48,7 @@ void signalHandler(int signalCode) {
 	if (signalCode == SIGINT) {
 		std::cout << "\ngot <CTRL+C>\nshutting down" << std::endl;
 		mc_p_->kill();
-		postPocess();
+	postProcess();
 		exit(EXIT_SUCCESS);
 	}
 }

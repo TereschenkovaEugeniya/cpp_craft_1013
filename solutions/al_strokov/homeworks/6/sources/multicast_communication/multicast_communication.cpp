@@ -1,6 +1,8 @@
 #include "multicast_communication.h"
 #include <sstream>
 
+const size_t multicast_communication::buffMaxSize_ = 1024;
+
 const std::map<const char, double> multicast_communication::denominators = { {
 		'A', 10.0 }, { 'B', 100.0 }, { 'C', 1000.0 }, { 'D', 10000.0 }, { 'E',
 		100000.0 }, { 'F', 1000000.0 }, { 'G', 10000000.0 },
@@ -39,7 +41,7 @@ multicast_communication::multicast_communication(size_t tradeThreadsCount,
 
 multicast_communication::~multicast_communication() {
 	for (size_t i = 0; i < quoteBuffs_.size(); i++) {
-		delete quoteBuffs_[i];
+		delete[] quoteBuffs_[i];
 	}
 	for (size_t i = 0; i < tradeBuffs_.size(); i++) {
 		delete[] tradeBuffs_[i];
@@ -122,14 +124,14 @@ void multicast_communication::processQuoteMessage(std::size_t messageSize,
 		shortQuote_t shortQuouteMsg;
 		bReader.readShortQuote(shortQuouteMsg);
 		extractQuoteMessage(shortQuouteMsg, qm);
+		boost::lock_guard<boost::mutex> lock(mtx_);
 		dataReceiver_.quotes_.push_back(qm);
 	} else if (messageHeader.isLongQuote()) {
 		longQuote_t longQuoteMsg;
 		bReader.readLongQuote(longQuoteMsg);
 		extractQuoteMessage(longQuoteMsg, qm);
+		boost::lock_guard<boost::mutex> lock(mtx_);
 		dataReceiver_.quotes_.push_back(qm);
-	} else {
-		std::cout << "uninteresting header" << std::endl;
 	}
 }
 
@@ -143,13 +145,14 @@ void multicast_communication::processTradeMessage(std::size_t messageSize,
 		shortTrade_t shortTradeMsg;
 		bReader.readShortTrade(shortTradeMsg);
 		extractTradeMessage(shortTradeMsg, tm);
+		boost::lock_guard<boost::mutex> lock(mtx_);
 		dataReceiver_.trades_.push_back(tm);
 	} else if (messageHeader.isLongTrade()) {
 		longTrade_t longTradeMsg;
 		bReader.readLongTrade(longTradeMsg);
 		extractTradeMessage(longTradeMsg, tm);
+		boost::lock_guard<boost::mutex> lock(mtx_);
 		dataReceiver_.trades_.push_back(tm);
-	} else {
 	}
 }
 

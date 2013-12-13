@@ -4,7 +4,7 @@
 #include <string>
 #include <fstream>
 
-#define filePath  SOURCE_DIR "/sources/datafiles/"
+const static std::string filePath(SOURCE_DIR "/sources/datafiles/");
 
 static const char SOH = 0x01;
 static const char ETX = 0x03;
@@ -18,7 +18,7 @@ void peekChar(const char key, std::ifstream& ifs) {
 void asendHandler(char *, const boost::system::error_code&,
 		std::size_t) {}
 
-void asendUdpFile(const char * fileName, boost::asio::io_service&ios,
+void sendUdpFile(const char * fileName, boost::asio::io_service&ios,
 		const char * address, const int port) {
 
 	boost::asio::ip::udp::endpoint endpoint(
@@ -73,23 +73,23 @@ int main() {
 
 	boost::asio::io_service service;
 
-	asendUdpFile(filePath "233.200.79.0.udp", service, "233.200.79.0", 61000);
-	asendUdpFile(filePath "233.200.79.1.udp", service, "233.200.79.1", 61001);
-	asendUdpFile(filePath "233.200.79.2.udp", service, "233.200.79.2", 61002);
-	asendUdpFile(filePath "233.200.79.3.udp", service, "233.200.79.3", 61003);
-	asendUdpFile(filePath "233.200.79.4.udp", service, "233.200.79.4", 61004);
-	asendUdpFile(filePath "233.200.79.5.udp", service, "233.200.79.5", 61005);
-	asendUdpFile(filePath "233.200.79.6.udp", service, "233.200.79.6", 61006);
-	asendUdpFile(filePath "233.200.79.7.udp", service, "233.200.79.7", 61007);
+	sendUdpFile( (filePath + "233.200.79.0.udp").c_str(), service, "233.200.79.0", 61000 );
+	sendUdpFile( (filePath + "233.200.79.1.udp").c_str(), service, "233.200.79.1", 61001 );
+	sendUdpFile( (filePath + "233.200.79.2.udp").c_str(), service, "233.200.79.2", 61002 );
+	sendUdpFile( (filePath + "233.200.79.3.udp").c_str(), service, "233.200.79.3", 61003 );
+	sendUdpFile( (filePath + "233.200.79.4.udp").c_str(), service, "233.200.79.4", 61004 );
+	sendUdpFile( (filePath + "233.200.79.5.udp").c_str(), service, "233.200.79.5", 61005 );
+	sendUdpFile( (filePath + "233.200.79.6.udp").c_str(), service, "233.200.79.6", 61006 );
+	sendUdpFile( (filePath + "233.200.79.7.udp").c_str(), service, "233.200.79.7", 61007 );
 
-	asendUdpFile(filePath "233.200.79.128.udp", service, "233.200.79.128", 62128);
-	asendUdpFile(filePath "233.200.79.129.udp", service, "233.200.79.129", 62129);
-	asendUdpFile(filePath "233.200.79.130.udp", service, "233.200.79.130", 62130);
-	asendUdpFile(filePath "233.200.79.131.udp", service, "233.200.79.131", 62131);
-	asendUdpFile(filePath "233.200.79.132.udp", service, "233.200.79.132", 62132);
-	asendUdpFile(filePath "233.200.79.133.udp", service, "233.200.79.133", 62133);
-	asendUdpFile(filePath "233.200.79.134.udp", service, "233.200.79.134", 62134);
-	asendUdpFile(filePath "233.200.79.135.udp", service, "233.200.79.135", 62135);
+	sendUdpFile( (filePath + "233.200.79.128.udp").c_str(), service, "233.200.79.128", 62128 );
+	sendUdpFile( (filePath + "233.200.79.129.udp").c_str(), service, "233.200.79.129", 62129 );
+	sendUdpFile( (filePath + "233.200.79.130.udp").c_str(), service, "233.200.79.130", 62130 );
+	sendUdpFile( (filePath + "233.200.79.131.udp").c_str(), service, "233.200.79.131", 62131 );
+	sendUdpFile( (filePath + "233.200.79.132.udp").c_str(), service, "233.200.79.132", 62132 );
+	sendUdpFile( (filePath + "233.200.79.133.udp").c_str(), service, "233.200.79.133", 62133 );
+	sendUdpFile( (filePath + "233.200.79.134.udp").c_str(), service, "233.200.79.134", 62134 );
+	sendUdpFile( (filePath + "233.200.79.135.udp").c_str(), service, "233.200.79.135", 62135 );
 
 	service.run();
 	std::cout << std::endl;

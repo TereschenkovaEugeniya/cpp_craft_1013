@@ -1,6 +1,6 @@
 #include "test_registrator.h"
 #include "multicast_communication.h"
-#include "marketdatareceiver.h"
+#include "market_data_receiver.h"
 #include "binReader.h"
 
 #include "cstdlib"
