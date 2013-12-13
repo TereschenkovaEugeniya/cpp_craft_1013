@@ -32,5 +32,7 @@ void minute_calculator::tests_::ts_minute_storage_tests()
 			trade_message::create_test_message( 
 				common::create_uint_time( 14, 06, 01 , 001 ), "A", 14.14, 15.6 ) );
 		BOOST_CHECK_EQUAL( ptr.get() != NULL, true );
+
+		ms.get_last_minute();
 	}
 }

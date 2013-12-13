@@ -72,7 +72,8 @@ std::ostream& minute_calculator::operator<<( std::ostream& out, const stock_minu
 
 void minute_calculator::stock_minute_data::print_binary( std::ostream& out )
 {
-	out.write( reinterpret_cast< char* >( &open_minute_ ), sizeof( open_minute_ ) );
+	const boost::uint32_t time_in_sec = static_cast< boost::uint32_t >( (minute_time_ - common::start_epoch_time).total_seconds() );
+	out.write( reinterpret_cast< const char* >( &time_in_sec ), sizeof( time_in_sec ) );
 	
 	out.write( name_.c_str(), name_.size() );
 	out.write( empty, name_length - name_.size() );

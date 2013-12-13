@@ -7,6 +7,13 @@ minute_calculator::stock_minute_storage::stock_minute_storage( const std::string
 }
 minute_calculator::stock_minute_storage::~stock_minute_storage()
 {
+	boost::mutex::scoped_lock lock( map_mutex_ );
+	for( minutes::iterator i = minutes_.begin() ; i != minutes_.end() ; ++i )
+	{
+		stock_minute_data_ptr last_minute = i->second->get_last_minute();
+		if ( last_minute )
+			last_minute->print_binary( output_ );
+	}
 }
 void minute_calculator::stock_minute_storage::new_trade( multicast_communication::trade_message_ptr& trade )
 {

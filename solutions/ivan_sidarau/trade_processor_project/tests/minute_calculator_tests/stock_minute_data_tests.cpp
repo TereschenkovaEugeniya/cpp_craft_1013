@@ -41,7 +41,7 @@ void minute_calculator::tests_::stock_minute_data_tests()
 		smd.print_binary( out );
 		out.close();
 
-		BOOST_CHECK_EQUAL( boost::filesystem::file_size( BINARY_DIR "/test_output.bin" ), 80ul );
+		BOOST_CHECK_EQUAL( boost::filesystem::file_size( BINARY_DIR "/test_output.bin" ), 76ul );
 		boost::filesystem::remove( BINARY_DIR "/test_output.bin" );
 	}
 }
