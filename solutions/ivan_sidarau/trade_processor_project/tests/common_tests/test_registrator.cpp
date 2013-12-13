@@ -16,6 +16,7 @@
 	master_test_suite.add( BOOST_TEST_CASE( &address_tests ) );
 	master_test_suite.add( BOOST_TEST_CASE( &config_reader_tests ) );
 	master_test_suite.add( BOOST_TEST_CASE( &buffer_tests ) );
+	master_test_suite.add( BOOST_TEST_CASE( &time_helper_tests ) );
 
 #ifdef RUN_PERFORMANCE_TESTS
 #endif

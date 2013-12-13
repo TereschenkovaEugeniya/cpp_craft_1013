@@ -14,6 +14,7 @@
 	using namespace minute_calculator::tests_;
 
 	master_test_suite.add( BOOST_TEST_CASE( &stock_minute_data_tests ) );
+	master_test_suite.add( BOOST_TEST_CASE( &ts_minute_storage_tests ) );
 
 #ifdef RUN_PERFORMANCE_TESTS
 #endif

@@ -3,6 +3,10 @@
 
 #include <cmath>
 
+#include <boost/cstdint.hpp>
+
+#include <time_helper.h>
+
 namespace multicast_communication
 {
 	namespace cts_protocol
@@ -53,6 +57,15 @@ namespace multicast_communication
 			char trade_volume[ trade_volume_size ];
 			char reserved_3[4];
 		};
+
+		inline boost::uint64_t get_time( const message_header& mh )
+		{
+			const long hours = mh.time_stamp[0] - '0';
+			const long minutes = mh.time_stamp[1] - '0';
+			const long seconds = mh.time_stamp[2] - '0';
+			const long milli = (mh.time_stamp[3] - '0') * 100 + (mh.time_stamp[4] - '0') * 10 + (mh.time_stamp[5] - '0');
+			return common::create_uint_time( hours, minutes, seconds, milli );
+		}
 
 		inline double get_price( const short_trade& st )
 		{

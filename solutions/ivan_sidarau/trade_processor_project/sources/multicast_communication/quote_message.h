@@ -3,6 +3,7 @@
 
 #include <boost/shared_ptr.hpp>
 #include <boost/cstdint.hpp>
+#include <boost/date_time/posix_time/ptime.hpp>
 
 #include <cqs_protocol.h>
 
@@ -14,7 +15,8 @@ namespace multicast_communication
 
 	class quote_message
 	{
-		boost::uint32_t minute_;
+		boost::posix_time::ptime message_time_;
+		boost::uint64_t minute_;
 
 		std::string security_symbol_;
 		double bid_price_;
@@ -26,7 +28,8 @@ namespace multicast_communication
 		explicit quote_message( const cqs_protocol::message_header&, const cqs_protocol::short_quote& );
 		explicit quote_message( const cqs_protocol::message_header&, const cqs_protocol::long_quote& );
 
-		boost::uint32_t minute() const;
+		const boost::posix_time::ptime& message_time() const;
+		boost::uint64_t minute() const;
 		const std::string& security_symbol() const;
 		double bid_price() const;
 		double bid_volume() const;
@@ -34,7 +37,7 @@ namespace multicast_communication
 		double offer_volume() const;
 
 		static quote_message_ptr create_test_message( 
-			const boost::uint32_t minute, 
+			const boost::uint64_t minute, 
 			const std::string security_symbol, 
 			double bid_price, 
 			double bid_volume, 
