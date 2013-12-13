@@ -69,8 +69,6 @@ messages::quote_message parser_messages::parser_quote::parse_long(const std::str
 	ret.offer_price = boost::lexical_cast<double>(std::string(ptrLongQuote->OfferPrice_LLPB, 12));
 	ret.offer_volume = boost::lexical_cast<double>(std::string(ptrLongQuote->OfferSize, 7));
 
-	/*ret.bid_volume = (double)(ptrLongQuote->BidSizeUnitsOfTrade);
-	ret.offer_price = (double)(ptrLongQuote->OfferShortPrice);
-	ret.offer_volume = (double)(ptrLongQuote->OfferSizeUnitsOfTrade);
-	*/return ret;
+
+	return ret;
 }

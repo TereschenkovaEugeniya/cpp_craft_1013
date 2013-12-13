@@ -1,4 +1,5 @@
-#pragma once
+#ifndef _PARSER_QUOTE_H_
+#define _PARSER_QUOTE_H_
 
 #include "messages.h"
 #include <vector>
@@ -25,15 +26,7 @@ namespace parser_messages
 			short_message = 'D',
 			long_message = 'B',
 		};
-
-		/*enum format_short_quote
-		{
-		message_header = 24,
-		security_symbol = 3, 
-		quote_condition = 1,
-		limitup_limit_down_indicator = 1,
-		reserved = 1,
-		bid_price_enominator Indicator 1 Bid Short Price 8 Bid Size Units of Trade 3 Reserved 1 Offer Price Denominator Indicator 1 Offer Short Price 8 Offer Size in Units of Trade 3 Reserved 1 National BBO Indicator 1 FINRA BBO Indicator 1
-		};*/
 	};
 }
+
+#endif
