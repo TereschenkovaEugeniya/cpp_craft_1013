@@ -36,7 +36,7 @@ quote_message::quote_message():type_(type_unknown),
         offer_volume_(0)
 {
 }
-quote_message::quote_message(std::istream& in, quote_type type):type_(type)
+quote_message::quote_message(std::istream& in, message_type type):type_(type)
 {
     switch (type_)
     {
@@ -81,7 +81,8 @@ quote_message::quote_message(std::istream& in, quote_type type):type_(type)
     }
 }
 
-quote_message_ptr build_quote( std::istream& in )
+template<>
+quote_message_ptr build<quote_message_ptr>( std::istream& in )
 {
     using namespace multicast_communication;
     char type;
@@ -92,10 +93,10 @@ quote_message_ptr build_quote( std::istream& in )
 	{
     case SQ:
         in.seekg(22, std::istream::cur);
-        return quote_message_ptr( new quote_message(in, quote_message::type_short));
+        return quote_message_ptr( new quote_message(in, type_short));
     case LQ:
         in.seekg(22, std::istream::cur);
-		return quote_message_ptr( new quote_message(in, quote_message::type_long));
+		return quote_message_ptr( new quote_message(in, type_long));
 	}
     return quote_message_ptr();
 }
@@ -136,38 +137,5 @@ std::ostream& multicast_communication::operator << ( std::ostream& out, const qu
                              << std::endl;    
 }
 
-template<>
-bool parse<multicast_communication::quote_messages_ptr>(const std::string& data, quote_messages_ptr& obj)
-{
-    std::istringstream in( data );
-    char c = in.get();
-	if( c != SOH )
-	{
-		return false;
-	}
-    
-    do
-	{
-        quote_message_ptr message(build_quote(in));
-        if(message->type() != quote_message::type_unknown)
-		{
-			obj.push_back(message);
-		}
-		c = in.get();
-
-		while(in)
-		{
-			if(c == US)
-				break;
-			else if(c == ETX)
-				return true;
-
-			c = in.get();
-		}
-	}while(in && c == US);
-
-	return false;
-
-}
 
 } //namespace multicast_communication 

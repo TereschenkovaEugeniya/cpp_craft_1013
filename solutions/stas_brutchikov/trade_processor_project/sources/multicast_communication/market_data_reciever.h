@@ -62,7 +62,7 @@ namespace multicast_communication
                             [&](const std::string& data)
 		                    {
 			                    container_message_ptr messages;
-			                    if(! parse(data,  messages) )
+			                    if(! parse<container_message_ptr, message_ptr>(data,  messages) )
 			                    {
                                     return; 
                                 }
