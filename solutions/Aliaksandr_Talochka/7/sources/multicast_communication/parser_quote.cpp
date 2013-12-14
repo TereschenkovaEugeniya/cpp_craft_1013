@@ -54,6 +54,9 @@ messages::quote_message parser_messages::parser_quote::parse_short(const std::st
 	ret.bid_volume = boost::lexical_cast<double>(std::string(ptrShortQuote->BidSizeUnitsOfTrade,3));
 	ret.offer_price = boost::lexical_cast<double>(std::string(ptrShortQuote->OfferShortPrice,8));
 	ret.offer_volume = boost::lexical_cast<double>(std::string(ptrShortQuote->OfferSizeUnitsOfTrade,3));
+	ret.time = convert_time(ptrShortQuote->Header[18])*3600 + convert_time(ptrShortQuote->Header[19])*60 + convert_time(ptrShortQuote->Header[20]);
+
+	
 
 	return ret;
 }
@@ -68,7 +71,7 @@ messages::quote_message parser_messages::parser_quote::parse_long(const std::str
 	ret.bid_volume = boost::lexical_cast<double>(std::string(ptrLongQuote->BidSize, 7));
 	ret.offer_price = boost::lexical_cast<double>(std::string(ptrLongQuote->OfferPrice_LLPB, 12));
 	ret.offer_volume = boost::lexical_cast<double>(std::string(ptrLongQuote->OfferSize, 7));
-
+	ret.time = convert_time(ptrLongQuote->Header[18])*3600 + convert_time(ptrLongQuote->Header[19])*60 + convert_time(ptrLongQuote->Header[20]);
 
 	return ret;
 }

@@ -16,6 +16,10 @@ multicast_communication::udp_listener::udp_listener( boost::asio::io_service& io
 }
 multicast_communication::udp_listener::~udp_listener()
 {
+	if (socket_.is_open())
+	{
+		socket_.close();
+	}
 }
 
 const std::vector< messages::quote_message > multicast_communication::udp_listener::get_quote_messages()
@@ -86,8 +90,6 @@ void multicast_communication::udp_listener::listen_handler_( buffer_type bt, con
 			{
 			case 'Q' :
 				push_vector<messages::quote_message>(messages_quote, quote_parser.parse(std::string( bt->c_str(), bytes_received )));
-				static unsigned short count;
-				std::cout<< count++ << std::endl;
 				break;
 			case 'T' :
 				push_vector<messages::trade_message>(messages_trade, trade_parser.parse(std::string( bt->c_str(), bytes_received )));
@@ -105,9 +107,9 @@ void multicast_communication::udp_listener::enlarge_buffer_( buffer_type& bt )
 }
 
 template <typename T>
-void multicast_communication::udp_listener::push_vector(std::vector<T>& Target, std::vector<T>& From)
+void multicast_communication::push_vector(std::vector<T>& Target, const std::vector<T>& From)
 {
-	for(std::vector<T>::iterator it = From.begin(); it != From.end(); ++it)
+	for(std::vector<T>::const_iterator it = From.begin(); it != From.end(); ++it)
 	{
 		Target.push_back(*it);
 	}

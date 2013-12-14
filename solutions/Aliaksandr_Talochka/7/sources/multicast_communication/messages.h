@@ -9,11 +9,13 @@ namespace messages
 		std::string security_symbol;
 		double price;
 		double volume;
+		unsigned int time;
 
 		trade_message()
 			: security_symbol(""), 
 			  price(0.0),
-			  volume(0.0)
+			  volume(0.0),
+			  time(0)
 		{
 		}
 	};
@@ -25,10 +27,12 @@ namespace messages
 		double bid_volume;
 		double offer_price;
 		double offer_volume;
+		unsigned int time;
+
 
 		quote_message()
 			: security_symbol(""), bid_price(0.0), bid_volume(0.0),
-			offer_price(0.0), offer_volume(0.0)
+			offer_price(0.0), offer_volume(0.0), time(0)
 		{
 		}
 	};

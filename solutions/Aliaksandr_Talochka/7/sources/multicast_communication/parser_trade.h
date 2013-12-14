@@ -20,6 +20,13 @@ namespace parser_messages
 	protected:
 		messages::trade_message parse_short(const std::string &trade, const short shift);
 		messages::trade_message parse_long(const std::string &trade, const short shift);
+		unsigned int convert_time (const unsigned char symbol)
+		{
+			if((symbol >= '0')&&(symbol <= 'k'))
+				return symbol-48;
+			else
+				return 0;
+		}
 
 		enum signature_message
 		{

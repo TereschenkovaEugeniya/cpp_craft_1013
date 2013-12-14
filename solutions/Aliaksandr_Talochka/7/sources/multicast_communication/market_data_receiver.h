@@ -18,6 +18,9 @@ namespace multicast_communication
 		market_data_receiver(const std::string& iniFileName);
 		~market_data_receiver();
 		void start();
+		void stop();
+		std::vector<messages::trade_message> get_trade_messages();
+		std::vector<messages::quote_message> get_quote_messages();
 	private:
 		vector_address_port addr_port_QUOTE;
 		vector_address_port addr_port_TRADE;

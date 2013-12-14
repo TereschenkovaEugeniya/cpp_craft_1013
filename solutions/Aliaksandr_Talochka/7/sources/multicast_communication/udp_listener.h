@@ -14,6 +14,11 @@
 
 namespace multicast_communication
 {
+
+	template <typename T>
+		void push_vector(std::vector<T>& Target, const std::vector<T>& From);
+
+
 	class udp_listener : virtual private boost::noncopyable
 	{
 		static const size_t default_buffer_size;
@@ -37,9 +42,6 @@ namespace multicast_communication
 		~udp_listener();
 		const std::vector< messages::quote_message > get_quote_messages();
 		const std::vector< messages::trade_message > get_trade_messages();
-		
-		template <typename T>
-		void push_vector(std::vector<T>& Target, std::vector<T>& From);
 
 	private:
 		void socket_reload_();
