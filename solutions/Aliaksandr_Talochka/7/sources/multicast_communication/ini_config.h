@@ -15,7 +15,7 @@ namespace multicast_communication
 	class ini_config
 	{
 	public:
-		static multicast_communication::ini_config* instance(const std::string& iniFileName);
+		static multicast_communication::ini_config instance(const std::string& iniFileName = std::string(BINARY_DIR"/configs.ini"));
 
 		vector_address_port get_trades_address_port() const;
 		vector_address_port get_quotes_address_port() const;
@@ -23,8 +23,7 @@ namespace multicast_communication
 		size_t get_quote_thread_size() const;
 
 	private:
-		explicit ini_config(const std::string& iniFileName);
-		explicit ini_config(const ini_config& root);
+		ini_config(const std::string& iniFileName);
 		ini_config& operator=(const ini_config&);
 
 		size_t read_integer(std::ifstream *stream);

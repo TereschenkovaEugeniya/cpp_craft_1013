@@ -20,9 +20,9 @@ multicast_communication::ini_config::ini_config(const std::string& iniFileName)
 	delete inputFile;
 }
 
-multicast_communication::ini_config* multicast_communication::ini_config::instance(const std::string& iniFileName)
+multicast_communication::ini_config multicast_communication::ini_config::instance(const std::string& iniFileName)
 {
-	ini_config* ini = new ini_config(iniFileName);
+	static ini_config ini(iniFileName);
 	return ini;
 }
 
