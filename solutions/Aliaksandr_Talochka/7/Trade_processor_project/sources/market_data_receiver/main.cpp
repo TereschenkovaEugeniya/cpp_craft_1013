@@ -12,7 +12,7 @@ int main()
 	try
 	{
 
-		multicast_communication::market_data_sender Sender(std::string(BINARY_DIR"/configs.ini"), std::string(BINARY_DIR));
+		multicast_communication::market_data_sender Sender(std::string(SOURCE_DIR"/sources/etc/configs.ini"), std::string(SOURCE_DIR"/tests/data"));
 		multicast_communication::market_data_receiver Receiver(std::string(BINARY_DIR"/configs.ini"));
 
 		Sender.start();
