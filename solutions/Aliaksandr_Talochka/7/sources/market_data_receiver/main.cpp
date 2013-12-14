@@ -16,18 +16,8 @@ void run_service(boost::asio::io_service& service_)
 
 int main()
 {
-
-	messages::LongQuote lq;
-	messages::ShortQuote sq;
-
-	int a = sizeof(messages::LongQuote);
-	int b = sizeof(messages::ShortQuote);
-
-
-
-
-
-
+	
+	
 	try
 	{
 		boost::asio::io_service io_service_sender;
@@ -47,8 +37,8 @@ int main()
 		boost::thread_group thread_group_listener; 
 
 		
-		multicast_communcation::udp_listener mc0(io_service_listener, "233.200.79.0", 61000);
-		multicast_communcation::udp_listener mc1(io_service_listener, "233.200.79.1", 61001);
+		multicast_communication::udp_listener mc0(io_service_listener, "233.200.79.0", 61000, 'Q');
+		multicast_communication::udp_listener mc1(io_service_listener, "233.200.79.1", 61001, 'Q');
 
 		for(size_t i = 0; i<2; i++)
 		{

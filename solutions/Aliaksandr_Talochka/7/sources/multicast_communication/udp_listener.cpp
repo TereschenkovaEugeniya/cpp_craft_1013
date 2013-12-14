@@ -2,27 +2,39 @@
 
 #include <boost/bind.hpp>
 
-const size_t multicast_communcation::udp_listener::default_buffer_size = 1000ul;
+const size_t multicast_communication::udp_listener::default_buffer_size = 1000ul;
 
-multicast_communcation::udp_listener::udp_listener( boost::asio::io_service& io_service, const std::string& multicast_address, unsigned short port )
+multicast_communication::udp_listener::udp_listener( boost::asio::io_service& io_service, const std::string& multicast_address, unsigned short port, const char data_type)
 	: io_service_( io_service )
 	, listen_endpoint_( boost::asio::ip::address::from_string( "0.0.0.0" ), port )
 	, socket_( io_service_ )
 	, multicast_address_( multicast_address )
+	, data_type_(data_type)
 {
 	socket_reload_();
 	register_listen_();
 }
-multicast_communcation::udp_listener::~udp_listener()
+multicast_communication::udp_listener::~udp_listener()
 {
-}
-const std::vector< messages::quote_message > multicast_communcation::udp_listener::messages() const
-{
-	boost::mutex::scoped_lock lock( protect_messages_ );
-	return messages_;
 }
 
-void multicast_communcation::udp_listener::socket_reload_()
+const std::vector< messages::quote_message > multicast_communication::udp_listener::get_quote_messages()
+{
+	boost::mutex::scoped_lock lock( protect_messages_ );
+
+	std::vector< messages::quote_message > out = messages_quote;
+	messages_quote.clear();
+	return out;
+}
+
+const std::vector< messages::trade_message > multicast_communication::udp_listener::get_trade_messages()
+{
+	boost::mutex::scoped_lock lock( protect_messages_ );
+	std::vector< messages::trade_message > out = messages_trade;
+	return out;
+}
+
+void multicast_communication::udp_listener::socket_reload_()
 {
 	using boost::asio::ip::udp;
 	using boost::asio::ip::address;
@@ -33,7 +45,7 @@ void multicast_communcation::udp_listener::socket_reload_()
 	socket_.bind( listen_endpoint_ );
 	socket_.set_option( join_group( address::from_string( multicast_address_ ) ) );
 }
-void multicast_communcation::udp_listener::register_listen_( buffer_type pre_buffer, const size_t previous_size )
+void multicast_communication::udp_listener::register_listen_( buffer_type pre_buffer, const size_t previous_size )
 {
 	buffer_type buffer;
 	
@@ -49,7 +61,7 @@ void multicast_communcation::udp_listener::register_listen_( buffer_type pre_buf
 		boost::bind( &udp_listener::listen_handler_, this, buffer, error, bytes_transferred ) );
 }
 
-void multicast_communcation::udp_listener::listen_handler_( buffer_type bt, const boost::system::error_code& error, const size_t bytes_received )
+void multicast_communication::udp_listener::listen_handler_( buffer_type bt, const boost::system::error_code& error, const size_t bytes_received )
 {
 	if ( error )
 	{
@@ -70,15 +82,33 @@ void multicast_communcation::udp_listener::listen_handler_( buffer_type bt, cons
 	{
 		{
 			boost::mutex::scoped_lock lock( protect_messages_ );
-			messages_ = quote_parser.parse(std::string( bt->c_str(), bytes_received ));
-			//messages_.push_back( std::string( bt->c_str(), bytes_received ) );
-			//std::cout << bt->c_str() << std::endl;
+			switch(data_type_)
+			{
+			case 'Q' :
+				push_vector<messages::quote_message>(messages_quote, quote_parser.parse(std::string( bt->c_str(), bytes_received )));
+				static unsigned short count;
+				std::cout<< count++ << std::endl;
+				break;
+			case 'T' :
+				push_vector<messages::trade_message>(messages_trade, trade_parser.parse(std::string( bt->c_str(), bytes_received )));
+				break;
+			}
+			
 		}
 		register_listen_();
 	}
 }
 
-void multicast_communcation::udp_listener::enlarge_buffer_( buffer_type& bt )
+void multicast_communication::udp_listener::enlarge_buffer_( buffer_type& bt )
 {
 	bt->resize( bt->size() + default_buffer_size );
+}
+
+template <typename T>
+void multicast_communication::udp_listener::push_vector(std::vector<T>& Target, std::vector<T>& From)
+{
+	for(std::vector<T>::iterator it = From.begin(); it != From.end(); ++it)
+	{
+		Target.push_back(*it);
+	}
 }
