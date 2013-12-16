@@ -18,6 +18,7 @@ minute_calculator::stock_minute_data_ptr minute_calculator::ts_minute_storage::n
 
 minute_calculator::stock_minute_data_ptr minute_calculator::ts_minute_storage::get_last_minute()
 {
+	boost::mutex::scoped_lock lock( protector_ );
 	stock_minute_data_ptr result = data_;
 	data_.reset();
 	return result;

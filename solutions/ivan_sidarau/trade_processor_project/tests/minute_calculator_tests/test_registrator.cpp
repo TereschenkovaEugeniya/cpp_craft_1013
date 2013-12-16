@@ -16,6 +16,7 @@
 	master_test_suite.add( BOOST_TEST_CASE( &stock_minute_data_tests ) );
 	master_test_suite.add( BOOST_TEST_CASE( &ts_minute_storage_tests ) );
 	master_test_suite.add( BOOST_TEST_CASE( &stock_minute_storage_tests ) );
+	master_test_suite.add( BOOST_TEST_CASE( &mediator_tests ) );
 
 #ifdef RUN_PERFORMANCE_TESTS
 #endif

@@ -7,5 +7,6 @@ namespace minute_calculator
 		void stock_minute_data_tests();
 		void ts_minute_storage_tests();
 		void stock_minute_storage_tests();
+		void mediator_tests();
 	}
 }

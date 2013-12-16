@@ -28,6 +28,7 @@ namespace minute_calculator
 	{
 		friend class tests_::detail::stock_minute_storage_test_helper;
 
+		const std::string filepath_;
 		std::ofstream output_;
 
 		typedef std::map< std::string, ts_minute_storage_ptr > minutes;
@@ -35,7 +36,7 @@ namespace minute_calculator
 		boost::mutex map_mutex_;
 		minutes minutes_;
 	public:
-		explicit stock_minute_storage( const std::string& filename );
+		explicit stock_minute_storage( const std::string& filepath );
 		~stock_minute_storage();
 	private:
 		virtual void new_trade( multicast_communication::trade_message_ptr& );
@@ -43,22 +44,23 @@ namespace minute_calculator
 
 		template< typename data_type >
 		void new_data_( const data_type& data );
+
+		void print_data_( const std::string& name, const stock_minute_data_ptr& data );
 	};
 
 	template< typename data_type >
 	void stock_minute_storage::new_data_( const data_type& data )
 	{
 		const std::string& security_name = data->security_symbol();
-		ts_minute_storage_ptr minute_storage;
+		stock_minute_data_ptr minute_storage;
 		{
 			boost::mutex::scoped_lock lock( map_mutex_ );
-			minute_storage = minutes_[ security_name ];
-			if ( !minute_storage )
-				minute_storage.reset( new ts_minute_storage() );
+			minutes::iterator i = minutes_.find( security_name );
+			if ( i == minutes_.end() )
+				i = minutes_.insert( std::make_pair( security_name, ts_minute_storage_ptr( new ts_minute_storage() ) ) ).first;
+			minute_storage = i->second->new_data( data );
 		}
-		stock_minute_data_ptr minute_to_store = minute_storage->new_data( data );
-		if ( minute_to_store )
-			minute_to_store->print_binary( output_ );
+		print_data_( security_name, minute_storage );
 	}
 
 

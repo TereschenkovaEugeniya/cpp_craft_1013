@@ -48,7 +48,7 @@ namespace minute_calculator
 		void add_market_data( const multicast_communication::trade_message_ptr& trade );
 		void add_market_data( const multicast_communication::quote_message_ptr& quote );
 		//
-		void print_binary( std::ostream& out );
+		void print_binary( std::ostream& out ) const;
 	};
 
 	typedef boost::shared_ptr< stock_minute_data > stock_minute_data_ptr;

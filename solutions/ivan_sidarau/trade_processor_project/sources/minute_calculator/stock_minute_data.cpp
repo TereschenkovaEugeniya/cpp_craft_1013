@@ -70,7 +70,7 @@ std::ostream& minute_calculator::operator<<( std::ostream& out, const stock_minu
 	return out;
 }
 
-void minute_calculator::stock_minute_data::print_binary( std::ostream& out )
+void minute_calculator::stock_minute_data::print_binary( std::ostream& out ) const
 {
 	const boost::uint32_t time_in_sec = static_cast< boost::uint32_t >( (minute_time_ - common::start_epoch_time).total_seconds() );
 	out.write( reinterpret_cast< const char* >( &time_in_sec ), sizeof( time_in_sec ) );
@@ -78,12 +78,12 @@ void minute_calculator::stock_minute_data::print_binary( std::ostream& out )
 	out.write( name_.c_str(), name_.size() );
 	out.write( empty, name_length - name_.size() );
 	
-	out.write( reinterpret_cast< char* >( &open_price_ ), sizeof( open_price_ ) );
-	out.write( reinterpret_cast< char* >( &high_price_ ), sizeof( high_price_ ) );
-	out.write( reinterpret_cast< char* >( &low_price_ ), sizeof( low_price_ ) );
-	out.write( reinterpret_cast< char* >( &close_price_ ), sizeof( close_price_ ) );
+	out.write( reinterpret_cast< const char* >( &open_price_ ), sizeof( open_price_ ) );
+	out.write( reinterpret_cast< const char* >( &high_price_ ), sizeof( high_price_ ) );
+	out.write( reinterpret_cast< const char* >( &low_price_ ), sizeof( low_price_ ) );
+	out.write( reinterpret_cast< const char* >( &close_price_ ), sizeof( close_price_ ) );
 
-	out.write( reinterpret_cast< char* >( &volume_ ), sizeof( volume_ ) );
-	out.write( reinterpret_cast< char* >( &bid_ ), sizeof( bid_ ) );
-	out.write( reinterpret_cast< char* >( &ask_ ), sizeof( ask_ ) );
+	out.write( reinterpret_cast< const char* >( &volume_ ), sizeof( volume_ ) );
+	out.write( reinterpret_cast< const char* >( &bid_ ), sizeof( bid_ ) );
+	out.write( reinterpret_cast< const char* >( &ask_ ), sizeof( ask_ ) );
 }
