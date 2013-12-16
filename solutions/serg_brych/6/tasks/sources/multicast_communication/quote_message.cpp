@@ -2,7 +2,7 @@
 #include "msg_utility.h"
 
 multicast_communication::quote_message::quote_message():
-	security_symbol_(""), bid_price_(0.0), bid_volume_(0.0),offer_price_(0.0), offer_volume_(0.0), type_(quote_type::unknown_quote)
+	security_symbol_(""), bid_price_(0.0), bid_volume_(0.0),offer_price_(0.0), offer_volume_(0.0), type_(quote_type::unknown_quote), time_(0)
 {
 
 }
@@ -31,7 +31,11 @@ bool multicast_communication::quote_message::parse_quote(std::istream &data)
 
 void multicast_communication::quote_message::parse_short_quote(std::istream &data)
 {
-	data.seekg(sq_security_symbol_pos, std::istream::cur);
+	data.seekg(sq_time_stamp_pos, std::istream::cur);
+	std::string temp_time = get_string<sq_time_stamp_len>(data);
+
+	time_ = get_time(temp_time[0]) * second_in_hour + get_time(temp_time[1]) * second_in_min + get_time(temp_time[2]);
+	
 	security_symbol_ = get_string<sq_security_symbol_len>(data);
 		
 	data.seekg(sq_bid_price_denominator_indicator_pos, std::istream::cur);
@@ -51,7 +55,11 @@ void multicast_communication::quote_message::parse_short_quote(std::istream &dat
 
 void multicast_communication::quote_message::parse_long_quote(std::istream &data)
 {
-	data.seekg(lq_security_symbol_pos, std::istream::cur);
+	data.seekg(lq_time_stamp_pos, std::istream::cur);
+	std::string temp_time = get_string<lq_time_stamp_len>(data);
+
+	time_ = get_time(temp_time[0]) * second_in_hour + get_time(temp_time[1]) * second_in_min + get_time(temp_time[2]);
+	
 	security_symbol_ = get_string<lq_security_symbol_len>(data);
 
 	data.seekg(lq_bid_price_denominator_indicator_pos, std::istream::cur);
@@ -60,8 +68,6 @@ void multicast_communication::quote_message::parse_long_quote(std::istream &data
 	bid_price_ = get_number<lq_price_len>(data)/ bid_price_denominator;
 	bid_volume_ = get_number<lq_volume_len>(data);
 
-	data.seekg(lq_offer_price_denominator_indicator_pos, std::istream::cur);
-		
 	double offer_price_denominator = denominator_map.at(get_string<lq_denominato_len>(data)[0]);
 	offer_price_ = get_number<lq_price_len>(data)/ offer_price_denominator;
 	offer_volume_ = get_number<lq_volume_len>(data);
@@ -92,6 +98,11 @@ double multicast_communication::quote_message::offer_price() const
 double multicast_communication::quote_message::offer_volume() const
 {
 	return offer_volume_;
+}
+
+uint32_t multicast_communication::quote_message::time() const
+{
+	return time_;
 }
 
 multicast_communication::quote_message::quote_type multicast_communication::quote_message::type() const

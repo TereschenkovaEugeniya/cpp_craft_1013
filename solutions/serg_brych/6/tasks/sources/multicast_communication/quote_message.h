@@ -28,13 +28,14 @@ namespace multicast_communication
 	private:
 		enum
 		{
-			sq_security_symbol_pos = 22,
+			sq_time_stamp_pos = 16,
 			sq_bid_price_denominator_indicator_pos = 3,
 			sq_offer_price_denominator_indicator_pos = 1,
 			sq_short_quote_end_pos = 3,
 		};
 		enum
 		{
+			sq_time_stamp_len = 6,
 			sq_security_symbol_len = 3,
 			sq_denominato_len = 1,
 			sq_price_len = 8,
@@ -43,13 +44,13 @@ namespace multicast_communication
 
 		enum 
 		{
-			lq_security_symbol_pos = 22,
+			lq_time_stamp_pos = 16,
 			lq_bid_price_denominator_indicator_pos = 16,
-			lq_offer_price_denominator_indicator_pos = 0,
 			lq_short_quote_end_pos = 11,
 		};
 		enum 
 		{
+			lq_time_stamp_len = 6,
 			lq_security_symbol_len = 11,
 			lq_denominato_len = 1,
 			lq_price_len = 12,
@@ -70,6 +71,7 @@ namespace multicast_communication
 		void parse_short_quote(std::istream &);
 		void parse_long_quote(std::istream &);
 		quote_type type_;
+		uint32_t time_;
 	public:
 		
 		quote_message();
@@ -80,6 +82,7 @@ namespace multicast_communication
 		double bid_volume() const;
 		double offer_price() const;
 		double offer_volume() const;
+		uint32_t time() const;
 		quote_type type() const;
 	};
 

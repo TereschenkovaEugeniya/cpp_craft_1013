@@ -33,12 +33,13 @@ namespace multicast_communication
 
 		enum
 		{
-			st_security_symbol_pos = 22,
+			st_time_stamp_pos = 16,
 			st_trade_volume_pos = 1,
 			st_trade_end_pos = 3,
 		};
 		enum
 		{
+			st_time_stamp_len = 6,
 			st_security_symbol_len = 3,
 			st_trade_volume_len = 4,
 			st_price_denominator_indicator_len = 1,
@@ -47,12 +48,13 @@ namespace multicast_communication
 
 		enum
 		{
-			lt_security_symbol_pos = 22,
+			lt_time_stamp_pos = 16,
 			lt_price_denominator_indicator_pos = 21,
 			lt_trade_end_pos = 4,
 		};
 		enum
 		{
+			lt_time_stamp_len = 6,
 			lt_security_symbol_len = 11,
 			lt_price_denominator_indicator_len = 1,
 			lt_trade_price_len = 12,
@@ -63,6 +65,7 @@ namespace multicast_communication
 		double price_;
 		double volume_;
 		trade_type type_;
+		uint32_t time_;
 
 		void parse_short_trade(std::istream &);
 		void parse_long_trade(std::istream &);
@@ -74,6 +77,7 @@ namespace multicast_communication
 		double price() const;
 		double volume() const;
 		trade_type type() const;
+		uint32_t time() const;
 	};
 
 	std::ostream& operator<<( std::ostream& output, trade_message& msg );
