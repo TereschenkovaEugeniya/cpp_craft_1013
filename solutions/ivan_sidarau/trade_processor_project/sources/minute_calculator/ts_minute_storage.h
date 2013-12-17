@@ -38,7 +38,9 @@ namespace minute_calculator
 	{
 		boost::mutex::scoped_lock lock( protector_ );
 		if ( !data_ )
+		{
 			data_.reset( new stock_minute_data( market_message ) );
+		}
 		else
 		{
 			const boost::posix_time::time_duration& data_time = data_->minute_time().time_of_day();

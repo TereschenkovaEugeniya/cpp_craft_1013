@@ -5,6 +5,6 @@ project( ${SOLUTION_NAME} )
 include( environment.cmake required )
 
 modules( common multicast_communication minute_calculator )
-binaries( market_data_receiver )
+binaries( market_data_receiver minute_market_data )
 
 compile()

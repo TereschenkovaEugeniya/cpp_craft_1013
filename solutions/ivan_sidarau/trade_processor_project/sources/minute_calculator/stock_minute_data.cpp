@@ -86,4 +86,5 @@ void minute_calculator::stock_minute_data::print_binary( std::ostream& out ) con
 	out.write( reinterpret_cast< const char* >( &volume_ ), sizeof( volume_ ) );
 	out.write( reinterpret_cast< const char* >( &bid_ ), sizeof( bid_ ) );
 	out.write( reinterpret_cast< const char* >( &ask_ ), sizeof( ask_ ) );
+	out.flush();
 }

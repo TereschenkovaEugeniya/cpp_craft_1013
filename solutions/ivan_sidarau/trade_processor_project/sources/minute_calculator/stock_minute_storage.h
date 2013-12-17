@@ -29,7 +29,6 @@ namespace minute_calculator
 		friend class tests_::detail::stock_minute_storage_test_helper;
 
 		const std::string filepath_;
-		std::ofstream output_;
 
 		typedef std::map< std::string, ts_minute_storage_ptr > minutes;
 

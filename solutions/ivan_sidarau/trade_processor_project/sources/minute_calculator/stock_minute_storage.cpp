@@ -26,11 +26,11 @@ void minute_calculator::stock_minute_storage::print_data_( const std::string& na
 {
 	if ( data )
 	{
-		output_.open( ( filepath_ + "/" + name + ".dat").c_str(), std::ios::app );
-		if ( output_.is_open() )
+		std::ofstream output( ( filepath_ + "/" + name + ".dat").c_str(), std::ios::app | std::ios::binary );
+		if ( output.is_open() )
 		{
-			data->print_binary( output_ );
-			output_.close();
+			data->print_binary( output );
+			output.close();
 		}
 		else
 			; // think about processing names that cannot be used as filename on filesystem
