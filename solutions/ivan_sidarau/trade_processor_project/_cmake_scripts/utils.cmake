@@ -150,6 +150,7 @@ macro( compile_project project_name source_pattern header_pattern build_type sol
 		endif(${VERBOSE})
 		include_directories( ${${dependencie}_INCLUDE_DIRS} )
 	endforeach( dependencie )	
+	include_directories( ${PROJECT_SOURCE_DIR} )
 
 	if ("${build_type}" STREQUAL "STATIC")
 		add_library(${project_name} STATIC ${${project_name}_SOURCE_LIST} )

@@ -16,7 +16,19 @@
 	master_test_suite.add( BOOST_TEST_CASE( &quote_message_tests ) );
 	master_test_suite.add( BOOST_TEST_CASE( &trade_message_tests ) );
 
-	master_test_suite.add( BOOST_TEST_CASE( &market_data_processor_tests ) );
+	master_test_suite.add( BOOST_TEST_CASE( &market_data_receiver_tests ) );
+
+	master_test_suite.add( BOOST_TEST_CASE( &cts_protocol_tests ) );
+	master_test_suite.add( BOOST_TEST_CASE( &cts_parser_tests ) );
+	master_test_suite.add( BOOST_TEST_CASE( &cts_message_parsing_tests ) );
+
+	master_test_suite.add( BOOST_TEST_CASE( &cqs_protocol_tests ) );
+	master_test_suite.add( BOOST_TEST_CASE( &cqs_parser_tests ) );
+	master_test_suite.add( BOOST_TEST_CASE( &cqs_message_parsing_tests ) );
+
+	master_test_suite.add( BOOST_TEST_CASE( &market_datafeed_writer_tests ) );
+
+	master_test_suite.add( BOOST_TEST_CASE( &mediator_tests ) );
 
 #ifdef RUN_PERFORMANCE_TESTS
 #endif
