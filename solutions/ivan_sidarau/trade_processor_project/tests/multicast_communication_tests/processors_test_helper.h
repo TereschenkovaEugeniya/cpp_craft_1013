@@ -22,6 +22,7 @@ namespace multicast_communication
 			template< typename cta_functor >
 			size_t send_file_with_delimeter( const std::string& file_name, const char delimeter, const cta_functor& );
 
+			std::pair< common::buffer_ptr, size_t > read_file( const std::string& filename );
 
 			template< typename parser_type >
 			class send_to_processor

@@ -17,6 +17,7 @@ namespace multicast_communication
 			public:
 				size_t amount_of_messages_;
 				std::vector< std::string > stock_names_;
+				std::vector< quote_message_ptr > messages_;
 
 				explicit quote_processor_test_helper()
 					: amount_of_messages_( 0ul )
@@ -32,7 +33,10 @@ namespace multicast_communication
 void multicast_communication::tests_::detail::quote_processor_test_helper::new_quote( quote_message_ptr& new_message )
 {
 	if ( new_message )
+	{
 		stock_names_.push_back( new_message->security_symbol() );
+		messages_.push_back( new_message );
+	}
 	++amount_of_messages_;
 }
 
@@ -62,3 +66,45 @@ void multicast_communication::tests_::cqs_parser_tests()
 		}
 	}
 }
+
+void multicast_communication::tests_::cqs_message_parsing_tests()
+{
+	detail::quote_processor_test_helper qpth;
+	cqs_parser parser( qpth );
+	std::pair< common::buffer_ptr, size_t > m1 = detail::read_file( SOURCE_DIR "/tests/data/udp_messages/cqs_message_1.bin" );
+	parser.process_message( m1.first, m1.second );
+	BOOST_CHECK_EQUAL( qpth.amount_of_messages_, 0ul );
+
+	std::pair< common::buffer_ptr, size_t > m2 = detail::read_file( SOURCE_DIR "/tests/data/udp_messages/cqs_message_2.bin" );
+	parser.process_message( m2.first, m2.second );
+	BOOST_CHECK_EQUAL( qpth.amount_of_messages_, 0ul );
+
+	std::pair< common::buffer_ptr, size_t > m3 = detail::read_file( SOURCE_DIR "/tests/data/udp_messages/cqs_message_3.bin" );
+	parser.process_message( m3.first, m3.second );
+	BOOST_CHECK_EQUAL( qpth.amount_of_messages_, 1ul );
+	BOOST_CHECK_EQUAL( qpth.messages_[ 0 ]->bid_price(), 11.28 );
+	BOOST_CHECK_EQUAL( qpth.messages_[ 0 ]->bid_volume(), 57.0 );
+	BOOST_CHECK_EQUAL( qpth.messages_[ 0 ]->offer_price(), 11.29 );
+	BOOST_CHECK_EQUAL( qpth.messages_[ 0 ]->offer_volume(), 4.0 );
+	BOOST_CHECK_EQUAL( qpth.messages_[ 0 ]->security_symbol(), "BBVA" );
+	BOOST_CHECK_EQUAL( qpth.messages_[ 0 ]->minute(), 3596264807000076u );
+
+	std::pair< common::buffer_ptr, size_t > m4 = detail::read_file( SOURCE_DIR "/tests/data/udp_messages/cqs_message_4.bin" );
+	parser.process_message( m4.first, m4.second );
+	BOOST_CHECK_EQUAL( qpth.amount_of_messages_, 3ul );
+
+	BOOST_CHECK_EQUAL( qpth.messages_[ 1 ]->bid_price(), 104.84 );
+	BOOST_CHECK_EQUAL( qpth.messages_[ 1 ]->bid_volume(), 3.0 );
+	BOOST_CHECK_EQUAL( qpth.messages_[ 1 ]->offer_price(), 104.9 );
+	BOOST_CHECK_EQUAL( qpth.messages_[ 1 ]->offer_volume(), 3.0 );
+	BOOST_CHECK_EQUAL( qpth.messages_[ 1 ]->security_symbol(), "BUD" );
+	BOOST_CHECK_EQUAL( qpth.messages_[ 1 ]->minute(), 3596264807000073u );
+
+	BOOST_CHECK_EQUAL( qpth.messages_[ 2 ]->bid_price(), 60.24 );
+	BOOST_CHECK_EQUAL( qpth.messages_[ 2 ]->bid_volume(), 3.0 );
+	BOOST_CHECK_EQUAL( qpth.messages_[ 2 ]->offer_price(), 60.25 );
+	BOOST_CHECK_EQUAL( qpth.messages_[ 2 ]->offer_volume(), 3.0 );
+	BOOST_CHECK_EQUAL( qpth.messages_[ 2 ]->security_symbol(), "WAG" );
+	BOOST_CHECK_EQUAL( qpth.messages_[ 2 ]->minute(), 3596264807000108u );
+}
+

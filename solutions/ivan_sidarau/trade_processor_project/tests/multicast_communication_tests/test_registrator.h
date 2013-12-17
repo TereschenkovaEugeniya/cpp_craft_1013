@@ -11,9 +11,11 @@ namespace multicast_communication
 
 		void cts_protocol_tests();
 		void cts_parser_tests();
+		void cts_message_parsing_tests();
 
 		void cqs_protocol_tests();
 		void cqs_parser_tests();
+		void cqs_message_parsing_tests();
 
 		void market_datafeed_writer_tests();
 
