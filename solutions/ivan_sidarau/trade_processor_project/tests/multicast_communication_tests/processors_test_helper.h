@@ -1,6 +1,8 @@
 #ifndef _TESTS_MARKET_DATA_PROCESSOR_TEST_HELPER_H_
 #define _TESTS_MARKET_DATA_PROCESSOR_TEST_HELPER_H_
 
+#include <fstream>
+
 #include <boost/filesystem.hpp>
 #include <boost/shared_array.hpp>
 	

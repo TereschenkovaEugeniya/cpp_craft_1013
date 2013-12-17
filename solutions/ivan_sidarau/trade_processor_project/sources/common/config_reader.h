@@ -9,8 +9,8 @@ namespace common
 {
 	class config_reader
 	{
-		static const size_t max_receive_thread_size = 32ul;
-		static const size_t max_listen_addresses_size = 10000ul;
+		static const size_t max_receive_thread_size;
+		static const size_t max_listen_addresses_size;
 
 		size_t trade_receive_threads_size_;
 		size_t quote_receive_threads_size_;

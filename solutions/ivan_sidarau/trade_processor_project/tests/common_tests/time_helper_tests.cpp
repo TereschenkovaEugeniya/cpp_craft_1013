@@ -15,7 +15,6 @@ void common::tests_::time_helper_tests()
 
 	const ptime t2 = convert( time );
 	const ptime t3 = convert( time );
-	const boost::uint64_t time2 = convert( t2 );
 
 	BOOST_CHECK_EQUAL( t1 == t3, true );
 

@@ -67,7 +67,7 @@ void multicast_communication::cqs_parser::filter_messages_( const char* parsing_
 	}
 }
 
-const char* multicast_communication::cqs_parser::parse_short_quote_( const char* parsing_ptr, size_t size )
+const char* multicast_communication::cqs_parser::parse_short_quote_( const char* parsing_ptr, size_t )
 {
 	const cqs_protocol::message_header* const mh = reinterpret_cast< const cqs_protocol::message_header* const >( parsing_ptr );
 	const cqs_protocol::short_quote* const sq = reinterpret_cast< const cqs_protocol::short_quote* const >( parsing_ptr + sizeof( cqs_protocol::message_header ) );
@@ -83,7 +83,7 @@ const char* multicast_communication::cqs_parser::parse_short_quote_( const char*
 
 	return parsing_ptr + sizeof( cqs_protocol::message_header ) + sizeof( cqs_protocol::short_quote ) + sizeof_appendages( *sq );
 }
-const char* multicast_communication::cqs_parser::parse_long_quote_( const char* parsing_ptr, size_t size )
+const char* multicast_communication::cqs_parser::parse_long_quote_( const char* parsing_ptr, size_t )
 {
 	const cqs_protocol::message_header* const mh = reinterpret_cast< const cqs_protocol::message_header* const >( parsing_ptr );
 	const cqs_protocol::long_quote* const lq = reinterpret_cast< const cqs_protocol::long_quote* const >( parsing_ptr + sizeof( cqs_protocol::message_header ) );

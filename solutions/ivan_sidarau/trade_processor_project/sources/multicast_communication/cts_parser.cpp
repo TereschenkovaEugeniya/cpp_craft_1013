@@ -65,7 +65,7 @@ void multicast_communication::cts_parser::filter_messages_( const char* parsing_
 	}
 }
 
-const char* multicast_communication::cts_parser::parse_short_trade_( const char* parsing_ptr, size_t size )
+const char* multicast_communication::cts_parser::parse_short_trade_( const char* parsing_ptr, size_t )
 {
 	const cts_protocol::message_header* const mh = reinterpret_cast< const cts_protocol::message_header* const >( parsing_ptr );
 	const cts_protocol::short_trade* const st = reinterpret_cast< const cts_protocol::short_trade* const >( parsing_ptr + sizeof( cts_protocol::message_header ) );
@@ -81,7 +81,7 @@ const char* multicast_communication::cts_parser::parse_short_trade_( const char*
 
 	return parsing_ptr + sizeof( cts_protocol::message_header ) + sizeof( cts_protocol::short_trade );
 }
-const char* multicast_communication::cts_parser::parse_long_trade_( const char* parsing_ptr, size_t size )
+const char* multicast_communication::cts_parser::parse_long_trade_( const char* parsing_ptr, size_t )
 {
 	const cts_protocol::message_header* const mh = reinterpret_cast< const cts_protocol::message_header* const >( parsing_ptr );
 	const cts_protocol::long_trade* const lt = reinterpret_cast< const cts_protocol::long_trade* const >( parsing_ptr + sizeof( cts_protocol::message_header ) );

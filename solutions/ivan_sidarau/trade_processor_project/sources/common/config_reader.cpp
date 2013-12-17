@@ -4,6 +4,9 @@
 
 #include <boost/lexical_cast.hpp>
 
+const size_t common::config_reader::max_receive_thread_size = 32ul;
+const size_t common::config_reader::max_listen_addresses_size = 10000ul;
+
 common::config_reader::config_reader( const std::string& filename )
 {
 	std::ifstream ifs( filename.c_str(), std::ios::in );

@@ -112,7 +112,7 @@ namespace multicast_communication
 			return volume;
 		}
 
-	};
+	}
 }
 
 #endif // _MULTICAST_COMMUNICATION_CTS_PROTOCOL_H_

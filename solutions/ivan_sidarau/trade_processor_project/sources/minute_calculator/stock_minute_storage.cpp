@@ -32,8 +32,7 @@ void minute_calculator::stock_minute_storage::print_data_( const std::string& na
 			data->print_binary( output );
 			output.close();
 		}
-		else
-			; // think about processing names that cannot be used as filename on filesystem
+		// think about processing names that cannot be used as filename on filesystem
 	}
 }
 

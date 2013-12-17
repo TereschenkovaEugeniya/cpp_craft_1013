@@ -16,5 +16,5 @@ find_package( system_utilities ${SEARCH_PARAMETERS} COMPONENTS
 	task_processor
 )
 
-compile_project( ${module_name} "*.cpp" "*.h" BINARY binaries common multicast_communication system_utilities Boost )
+compile_project( ${module_name} "*.cpp" "*.h" BINARY binaries multicast_communication common system_utilities Boost )
 

@@ -7,8 +7,9 @@ namespace common
 {
 	struct buffer
 	{
-		const static size_t size = 1024ul;
+		static const unsigned int size = 1024ul;
 		char data[ size ];
+		static unsigned int buffer_size();
 	};
 
 	typedef boost::shared_ptr< buffer > buffer_ptr;
